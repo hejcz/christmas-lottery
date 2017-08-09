@@ -1,0 +1,6 @@
+img {
+    width: 100%;
+}
+@media (max-width:991px) {
+    .column-margin { margin: 10px 0; }
+}
