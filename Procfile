@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/dependency/webapp-runner-8.5.15.1.jar --port $PORT target/carol.war
+web: java -Dserver.port=$PORT -jar build/libs/Carol-0.1.jar
