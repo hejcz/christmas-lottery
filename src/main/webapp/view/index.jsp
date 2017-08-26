@@ -6,10 +6,10 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>Dupa</title>
-    <link href = "<c:url value="/static/css/index.css" />" rel="stylesheet"/>
-    <link href = "<c:url value="/static/css/bootstrap.css" />" rel="stylesheet"/>
-    <link href = "<c:url value="/static/css/csshake.min.css"/>" rel="stylesheet"/>
-    <script src = "<c:url value="/static/js/jquery-3.2.1.js"/>"></script>
+    <link href = "<c:url value="/css/index.css" />" rel="stylesheet"/>
+    <link href = "<c:url value="/css/bootstrap.css" />" rel="stylesheet"/>
+    <link href = "<c:url value="/css/csshake.min.css"/>" rel="stylesheet"/>
+    <script src = "<c:url value="/js/jquery-3.2.1.js"/>"></script>
 </head>
 <body>
 <div class="jumbotron text-center">
@@ -40,7 +40,7 @@
             No i ja się pytam człowieku dumny ty jesteś z siebie zdajesz sobie sprawę z tego co robisz? Masz ty w ogóle rozum i godność człowieka? Ja nie wiem ale żałosny typek z ciebie ,chyba nie pomyślałeś nawet co robisz i kogo obrażasz ,możesz sobie obrażać tych co na to zasłużyli sobie ale nie naszego papieża Polaka naszego rodaka wielką osobę ,i tak wyjątkowa i ważną bo to nie jest ktoś tam taki sobie że możesz go sobie wyśmiać bo tak ci się podoba nie wiem w jakiej ty się wychowałeś rodzinie ale chyba ty nie wiem nie rozumiesz co to jest wiara .jeśli myślisz że jesteś wspaniały to jesteś zwykłym czubkiem którego ktoś nie odizolował jeszcze od społeczeństwa ,nie wiem co w tym jest takie śmieszne ale czepcie się Stalina albo Hitlera albo innych zwyrodnialców a nie czepiacie się takiej świętej osoby jak papież Jan Paweł 2 .jak można w ogóle publicznie zamieszczać takie zdjęcia na forach internetowych? Ja się pytam kto powinien za to odpowiedzieć bo chyba widać że do kościoła nie chodzi jak jesteś nie wiem ateistą albo wierzysz w jakieś sekty czy w ogóle jesteś może ty sługą szatana a nie będziesz z papieża robił takiego ,to ty chyba jesteś jakiś nie wiem co się jarasz pomiotami szatana .weź pomyśl sobie ile papież zrobił ,on był kimś a ty kim jesteś żeby z niego sobie robić kpiny co? kto dał ci prawo obrażać w ogóle papieża naszego ?pomyślałeś w ogóle nad tym że to nie jest osoba taka sobie że ją wyśmieje i mnie będą wszyscy chwalić? weź dziecko naprawdę jesteś jakiś psycholek bo w przeciwieństwie do ciebie to papież jest autorytetem dla mnie a ty to nie wiem czyim możesz być autorytetem chyba takich samych jakiś głupków jak ty którzy nie wiedza co to kościół i religia ,widać że się nie modlisz i nie chodzisz na religie do szkoły ,widać nie szanujesz religii to nie wiem jak chcesz to sobie weź swoje zdjęcie wstaw ciekawe czy byś się odważył .naprawdę wezta się dzieci zastanówcie co wy roicie bo nie macie widać pojęcia o tym kim był papież Jan Paweł 2 jak nie jesteście w pełni rozwinięte umysłowo to się nie zabierajcie za taką osobę jak ojciec święty bo to świadczy o tym że nie macie chyba w domu krzyża ani jednego obraza świętego nie chodzi tutaj o kościół mnie ale w ogóle ogólnie o zasady wiary żeby mieć jakąś godność bo papież nikogo nie obrażał a ty za co go obrażasz co? no powiedz za co obrażasz taką osobę jak ojciec święty ?brak mnie słów ale jakbyś miał pojęcie chociaż i sięgnął po pismo święte i poczytał sobie to może byś się odmienił .nie wiem idź do kościoła bo widać już dawno szatan jest w tobie człowieku ,nie lubisz kościoła to chociaż siedź cicho i nie obrażaj innych ludzi
         </div>
         <div class="col-md-4">
-            <img class="shake-hard shake-constant" src="<c:url value="/static/images/reeeeee.jpg"/> " alt="reeeee"/>
+            <img class="shake-hard shake-constant" src="<c:url value="/images/reeeeee.jpg"/> " alt="reeeee"/>
         </div>
     </div>
 </div>

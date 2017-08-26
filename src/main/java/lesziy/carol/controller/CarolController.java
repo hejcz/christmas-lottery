@@ -1,15 +1,11 @@
 package lesziy.carol.controller;
 
 import org.apache.log4j.Logger;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 @Controller
-@EnableAutoConfiguration
-public class CarolController {
+class CarolController {
     private static Logger logger = Logger.getLogger(CarolController.class.getName());
 
     @RequestMapping("/wot")
@@ -23,5 +19,4 @@ public class CarolController {
         logger.info("home site");
         return "index";
     }
-
 }
