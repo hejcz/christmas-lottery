@@ -1,0 +1,26 @@
+def publicDir = 'src/main/resources/public'
+def frontendBuildDir = 'frontend/build'
+
+task prepareFrontend() {
+    doLast {
+        delete fileTree(dir: publicDir)
+    }
+
+    doLast {
+        exec {
+            workingDir 'frontend'
+            commandLine 'yarn', 'build'
+        }
+    }
+
+    doLast {
+        copy {
+            into publicDir
+            from(frontendBuildDir)
+        }
+    }
+
+    doLast {
+        delete(frontendBuildDir)
+    }
+}

@@ -10,6 +10,8 @@ plugins {
     id 'idea'
 }
 
+apply from: './frontend.gradle'
+
 idea {
     module {
         inheritOutputDirs = false
