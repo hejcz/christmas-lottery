@@ -1,4 +1,4 @@
-def publicDir = 'src/main/resources/public'
+def publicDir = 'src/main/resources/static'
 def frontendBuildDir = 'frontend/build'
 
 task prepareFrontend() {
