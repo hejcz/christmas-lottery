@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="header"></div>
+<body>
+<div th:replace="nav"></div>
+<div class="container">
+
+    <div class="starter-template">
+        <h1 th:text="#{label.login.form.title}">form</h1>
+        <form th:action="@{/login}"  method="POST">
+            <div>
+                <label th:text="#{label.login.userDto.username}">first</label>
+                <input th:name="'username'" type="text"/>
+            </div>
+            <div>
+                <label th:text="#{label.login.userDto.password}">password</label>
+                <input th:name="'password'" type="password" />
+            </div>
+            <button type="submit" th:text="#{label.login.form.submit}">submit</button>
+        </form>
+    </div>
+
+</div>
+<div th:replace="js"></div>
+</body>
+</html>

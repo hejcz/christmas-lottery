@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="header"></div>
+<body>
+<div th:replace="nav"></div>
+<div class="container">
+
+    <table class="table">
+        <thead>
+            <th>Moje prezenty</th>
+        </thead>
+        <tr th:each="myWish : ${myWishes}">
+            <td th:text="${myWish.text()}"></td>
+        </tr>
+    </table>
+
+    <table class="table" th:if="${hasRecipient}">
+        <thead>
+        <th>Życzenia wylosowanej osoby
+            ( <span th:text="${recipientWithWishes.recipientLogin()}"></span> )
+        </th>
+        </thead>
+        <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
+            <td th:text="${myWish.text()}"></td>
+        </tr>
+    </table>
+
+    <div th:if="${isAdmin}">
+        <form th:action="@{/dashboard/lottery}" th:method="POST">
+            <button class="btn btn-primary" th:type="Submit">
+                Start the lottery
+            </button>
+        </form>
+    </div>
+
+</div>
+<div th:replace="js"></div>
+</body>
+</html>
