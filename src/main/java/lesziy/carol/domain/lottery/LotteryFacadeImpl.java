@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +33,14 @@ public class LotteryFacadeImpl implements LotteryFacade {
         if (users.moreThanOne()) {
             matchRepository.save(lotteryResults(users));
         }
+    }
+
+    @Override
+    public boolean annualLotteryNotPerformedYet() {
+        return matchRepository.findByCreationDateBetween(
+            Timestamp.valueOf(LocalDateTime.now().withDayOfYear(1)),
+            Timestamp.valueOf(LocalDateTime.now().withDayOfYear(1).plusYears(1))
+        ).isEmpty();
     }
 
     private Set<User> users() {

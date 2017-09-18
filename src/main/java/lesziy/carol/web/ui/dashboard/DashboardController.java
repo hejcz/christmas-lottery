@@ -28,14 +28,18 @@ class DashboardController {
 
     @GetMapping
     public String dashboard(Model model) {
-        DtoUser dtoUser = loggedUser();
-        model.addAttribute("isAdmin", dtoUser.systemRole() == SystemRole.ADMIN);
-        model.addAttribute("myWishes", lotteryFacade.wishesOf(dtoUser.id()));
-        Optional<DtoWishGiver> actualRecipient = lotteryFacade.actualRecipientWishes(dtoUser.id());
-        model.addAttribute("hasRecipient", actualRecipient.isPresent());
-        actualRecipient.ifPresent(recipient ->
-            model.addAttribute("recipientWithWishes", recipient));
+        fillDashboardModel(model);
         return "dashboard";
+    }
+
+    private void fillDashboardModel(Model model) {
+        DtoUser loggedUser = loggedUser();
+        Optional<DtoWishGiver> recipientWishes = lotteryFacade.actualRecipientWishes(loggedUser.id());
+        model.addAttribute("isAdmin", loggedUser.systemRole() == SystemRole.ADMIN);
+        model.addAttribute("canPerformLottery", lotteryFacade.annualLotteryNotPerformedYet());
+        model.addAttribute("myWishes", lotteryFacade.wishesOf(loggedUser.id()));
+        model.addAttribute("hasRecipient", recipientWishes.isPresent());
+        recipientWishes.ifPresent(recipient -> model.addAttribute("recipientWithWishes", recipient));
     }
 
     private DtoUser loggedUser() {
@@ -46,7 +50,9 @@ class DashboardController {
 
     @PostMapping("/lottery")
     public String startLottery() {
-        lotteryFacade.performLottery();
+        if (lotteryFacade.annualLotteryNotPerformedYet()) {
+            lotteryFacade.performLottery();
+        }
         return "dashboard";
     }
 

@@ -5,33 +5,39 @@
 <div th:replace="nav"></div>
 <div class="container">
 
-    <table class="table">
-        <thead>
+    <div th:if="${!isAdmin}">
+        <table class="table">
+            <thead>
             <th>Moje prezenty</th>
-        </thead>
-        <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.domain.lottery.DtoWishRecipient>"*/-->
-        <tr th:each="myWish : ${myWishes}">
-            <td th:text="${myWish.text()}"></td>
-        </tr>
-    </table>
+            </thead>
+            <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.domain.lottery.DtoWishRecipient>"*/-->
+            <tr th:each="myWish : ${myWishes}">
+                <td th:text="${myWish.text()}"></td>
+            </tr>
+        </table>
 
-    <!--/*@thymesVar id="hasRecipient" type="java.lang.Boolean"*/-->
-    <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
-    <table class="table" th:if="${hasRecipient}">
-        <thead>
-        <th>Życzenia wylosowanej osoby
-            ( <span th:text="${recipientWithWishes.recipientLogin()}"></span> )
-        </th>
-        </thead>
-        <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
-            <td th:text="${myWish.text()}"></td>
-        </tr>
-    </table>
+        <!--/*@thymesVar id="hasRecipient" type="java.lang.Boolean"*/-->
+        <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
+        <table class="table" th:if="${hasRecipient}">
+            <thead>
+            <th>Życzenia wylosowanej osoby
+                ( <span th:text="${recipientWithWishes.recipientLogin()}"></span> )
+            </th>
+            </thead>
+            <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
+                <td th:text="${myWish.text()}"></td>
+            </tr>
+        </table>
+    </div>
 
     <!--/*@thymesVar id="isAdmin" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="canPerformLottery" type="java.lang.Boolean"*/-->
     <div th:if="${isAdmin}">
         <form th:action="@{/dashboard/lottery}" th:method="POST">
-            <button class="btn btn-primary" th:type="Submit">
+            <button class="btn btn-primary"
+                    th:classappend="${!canPerformLottery}? 'disabled'"
+                    th:type="Submit"
+                    th:disabled="${!canPerformLottery}">
                 Start the lottery
             </button>
         </form>

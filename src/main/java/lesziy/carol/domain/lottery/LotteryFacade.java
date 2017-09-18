@@ -7,6 +7,8 @@ public interface LotteryFacade {
 
     void performLottery();
 
+    boolean annualLotteryNotPerformedYet();
+
     Optional<DtoWishGiver> actualRecipientWishes(Integer giverId);
 
     Collection<DtoWishRecipient> wishesOf(Integer recipientId);
