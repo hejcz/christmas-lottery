@@ -87,7 +87,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     @Override
     public void updateWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
         Collection<DbWish> wishesInDb = wishesRepository.findByRecipientId(recipientId);
-        Set<Integer> ids = wishes.stream().map(DtoWishRecipient::id).collect(Collectors.toSet());
+        Set<Integer> ids = wishes.stream().map(DtoWishRecipient::getId).collect(Collectors.toSet());
         removeInvalidWishes(wishesInDb, ids);
         if (!wishes.isEmpty()) {
             saveWishes(recipientId, wishes);

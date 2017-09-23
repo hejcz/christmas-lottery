@@ -12,4 +12,8 @@ public interface UserFacade {
     Optional<DtoUser> findByLogin(String username);
 
     DbUser findById(Integer id);
+
+    Optional<DtoUser> loggedUser();
+
+    DtoUser loggedUserOrException();
 }

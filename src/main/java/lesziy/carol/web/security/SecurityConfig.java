@@ -19,7 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/dashboard").hasAnyAuthority("USER", "ADMIN")
+            .antMatchers("/api/**").hasAnyAuthority(registered())
+            .antMatchers("/dashboard").hasAnyAuthority(registered())
                 .antMatchers("/**").permitAll()
             .and()
                 .formLogin()
@@ -29,6 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(authenticationProvider())
             .csrf()
                 .disable();
+    }
+
+    private String[] registered() {
+        return new String[]{"USER", "ADMIN"};
     }
 
     @Bean
