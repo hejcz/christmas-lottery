@@ -22,4 +22,10 @@ interface MatchRepository extends CrudRepository<DbMatch, Integer> {
                 dbMatch.getCreationDate().toLocalDateTime().getYear() == LocalDateTime.now().getYear())
             .findFirst();
     }
+
+    void deleteByCreationDateBetween(Timestamp startOfCurrentYear, Timestamp startOfNextYear);
+
+    Optional<DbMatch> findByRecipientIdAndCreationDateIsBetween(Integer recipientId,
+                                                                  Timestamp startOfCurrentYear,
+                                                                  Timestamp startOfNextYear);
 }

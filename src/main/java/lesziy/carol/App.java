@@ -27,31 +27,34 @@ public class App implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         registrationFacade
-            .register(new DtoUser(0, "admin", "somepassword", "rubin94@gmail.com", SystemRole.ADMIN));
+            .register(new DtoUser(0, "admin", "", "", "passwd", "rubin94@gmail.com", SystemRole.ADMIN));
         registrationFacade
-            .register(new DtoUser(1, "a", "somepassword", "rubin94@gmail.com", SystemRole.USER));
+            .register(new DtoUser(1, "jrubin", "Julian", "Rubin", "passwd", "rubin94@gmail.com", SystemRole.USER));
         registrationFacade
-            .register(new DtoUser(2, "b", "somepassword", "rubin94@gmail.com", SystemRole.USER));
+            .register(new DtoUser(2, "zrubin", "Zosia", "Rubin", "passwd", "rubin94@gmail.com", SystemRole.USER));
         registrationFacade
-            .register(new DtoUser(3, "c", "somepassword", "rubin94@gmail.com", SystemRole.USER));
+            .register(new DtoUser(3, "trubin", "Tomek", "Rubin", "passwd", "rubin94@gmail.com", SystemRole.USER));
 
         lotteryFacade.performLottery();
 
-        Integer userAId = userFacade.findByLogin("a").get().id();
+        userFacade.findByLogin("jrubin").ifPresent(dtoUser ->
+            lotteryFacade.updateWishes(dtoUser.id(), ImmutableList.of(
+                new DtoWishRecipient(null, "Pluszowy miś"),
+                new DtoWishRecipient(null, "Hulajnoga")
+            ))
+        );
 
-        lotteryFacade.updateWishes(userAId, ImmutableList.of(
-            new DtoWishRecipient(null, "Pluszowy miś"),
-            new DtoWishRecipient(null, "Hulajnoga")
-        ));
+//        userFacade.findByLogin("zrubin").ifPresent(dtoUser ->
+//            lotteryFacade.updateWishes(dtoUser.id(), ImmutableList.of(
+//                new DtoWishRecipient(null, "Harry Potter - film")
+//            ))
+//        );
+//
+//        userFacade.findByLogin("trubin").ifPresent(dtoUser ->
+//            lotteryFacade.updateWishes(dtoUser.id(), ImmutableList.of(
+//                new DtoWishRecipient(null, "Percy Jackson - książka")
+//            ))
+//        );
 
-        lotteryFacade.updateWishes(userFacade.findByLogin("b").get().id(), ImmutableList.of(
-            new DtoWishRecipient(null, "Harry Potter - film")
-        ));
-
-        lotteryFacade.updateWishes(userFacade.findByLogin("c").get().id(), ImmutableList.of(
-            new DtoWishRecipient(null, "Percy Jackson - książka")
-        ));
-
-        System.out.println(lotteryFacade.actualRecipientWishes(userAId));
     }
 }

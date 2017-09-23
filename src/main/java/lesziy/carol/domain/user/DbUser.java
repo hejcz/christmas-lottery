@@ -26,6 +26,10 @@ public class DbUser {
     @Column(nullable = false)
     private String login;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String surname;
+    @Column(nullable = false)
     private String email;
     @Column(nullable = false)
     private String password;
@@ -33,6 +37,10 @@ public class DbUser {
     private SystemRole systemRole;
 
     DtoUser toDto() {
-        return new DtoUser(id, login, password, email, systemRole);
+        return new DtoUser(id, login, name, surname, password, email, systemRole);
+    }
+
+    public String formatName() {
+        return String.format("%s %s", getName(), getSurname());
     }
 }

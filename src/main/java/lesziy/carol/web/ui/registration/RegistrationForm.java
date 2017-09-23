@@ -16,4 +16,8 @@ class RegistrationForm {
     private String matchingPassword;
     @NotNull @NotEmpty
     private String email;
+    @NotNull @NotEmpty
+    private String name;
+    @NotNull @NotEmpty
+    private String surname;
 }

@@ -12,6 +12,8 @@ import lombok.experimental.Accessors;
 public class DtoUser {
     private Integer id;
     private String login;
+    private String name;
+    private String surname;
     private String password;
     private String email;
     private SystemRole systemRole;
@@ -24,6 +26,8 @@ public class DtoUser {
         return new DbUser(
             id,
             login,
+            name,
+            surname,
             email,
             password,
             systemRole

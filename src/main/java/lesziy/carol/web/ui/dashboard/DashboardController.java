@@ -1,9 +1,10 @@
 package lesziy.carol.web.ui.dashboard;
 
+import com.google.common.base.Strings;
 import lesziy.carol.domain.lottery.DtoWishGiver;
+import lesziy.carol.domain.lottery.DtoWishRecipient;
 import lesziy.carol.domain.lottery.LotteryFacade;
 import lesziy.carol.domain.user.DtoUser;
-import lesziy.carol.domain.user.SystemRole;
 import lesziy.carol.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/dashboard")
@@ -32,11 +37,11 @@ class DashboardController {
     }
 
     private void fillDashboardModel(Model model) {
-        DtoUser loggedUser = userFacade.loggedUserOrException();
-        Optional<DtoWishGiver> recipientWishes = lotteryFacade.actualRecipientWishes(loggedUser.id());
-        model.addAttribute("isAdmin", loggedUser.systemRole() == SystemRole.ADMIN);
+        Integer loggedUserId = loggedUser().id();
+        Optional<DtoWishGiver> recipientWishes = lotteryFacade.actualRecipientWishes(loggedUserId);
+        model.addAttribute("isAdmin", userFacade.isLoggedUserAdmin());
         model.addAttribute("canPerformLottery", canPerformLottery());
-        model.addAttribute("myWishes", new WishesForm(lotteryFacade.wishesOf(loggedUser.id())));
+        model.addAttribute("myWishes", new WishesForm(lotteryFacade.wishesOf(loggedUserId)));
         model.addAttribute("hasRecipient", recipientWishes.isPresent());
         recipientWishes.ifPresent(recipient -> model.addAttribute("recipientWithWishes", recipient));
     }
@@ -45,6 +50,7 @@ class DashboardController {
         return lotteryFacade.annualLotteryNotPerformedYet();
     }
 
+    @Transactional
     @PostMapping("/lottery")
     public String startLottery() {
         if (canPerformLottery()) {
@@ -53,10 +59,33 @@ class DashboardController {
         return "redirect:/dashboard";
     }
 
+    @Transactional
+    @PostMapping("/resetLottery")
+    public String resetLottery() {
+        lotteryFacade.deleteActualLottery();
+        return "redirect:/dashboard";
+    }
+
     @PostMapping("/editWishes")
     public String editWishes(@ModelAttribute WishesForm wishesForm) {
-        System.out.println(wishesForm);
+        lotteryFacade.updateWishes(loggedUser().id(), skipNullEntries(wishesForm));
         return "redirect:/dashboard";
+    }
+
+    private DtoUser loggedUser() {
+        return userFacade.loggedUserOrException();
+    }
+
+    private List<DtoWishRecipient> skipNullEntries(@ModelAttribute WishesForm wishesForm) {
+        if (wishesForm.getWishes() == null) {
+            wishesForm.setWishes(Collections.emptyList());
+        }
+
+        return wishesForm.getWishes()
+            .stream()
+            .filter(dtoWishRecipient -> dtoWishRecipient != null)
+            .filter(dtoWishRecipient -> !Strings.isNullOrEmpty(dtoWishRecipient.getText()))
+            .collect(Collectors.toList());
     }
 
 }

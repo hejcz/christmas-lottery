@@ -36,13 +36,18 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public Optional<DtoUser> loggedUser() {
+    public DtoUser loggedUserOrException() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return findByLogin(auth.getName()).orElseThrow(RuntimeException::new);
+    }
+
+    private Optional<DtoUser> loggedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return findByLogin(auth.getName());
     }
 
     @Override
-    public DtoUser loggedUserOrException() {
-        return loggedUser().orElseThrow(RuntimeException::new);
+    public boolean isLoggedUserAdmin() {
+        return loggedUserOrException().systemRole() == SystemRole.ADMIN;
     }
 }

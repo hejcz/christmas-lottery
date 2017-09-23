@@ -19,7 +19,4 @@ class LoginController {
         return "login";
     }
 
-    private boolean isAlreadyLogged() {
-        return authenticationPredicates.isAlreadyLogged();
-    }
 }

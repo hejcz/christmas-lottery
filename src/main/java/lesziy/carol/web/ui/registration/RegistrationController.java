@@ -2,15 +2,15 @@ package lesziy.carol.web.ui.registration;
 
 import lesziy.carol.domain.registration.RegistrationFacade;
 import lesziy.carol.domain.user.DtoUser;
+import lesziy.carol.domain.user.SystemRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/register")
@@ -25,17 +25,27 @@ class RegistrationController {
     }
 
     @PostMapping
-    public String register(@Valid RegistrationForm registrationForm,
+    public String register(@ModelAttribute RegistrationForm registrationForm,
                            Errors errors) {
         if (errors.hasErrors()) {
             return "registration";
         }
 
+        System.out.println(registrationForm);
+
         DtoUser dtoUser = new DtoUser();
         dtoUser.login(registrationForm.getUsername());
+        dtoUser.name(registrationForm.getName());
+        dtoUser.surname(registrationForm.getSurname());
         dtoUser.password(registrationForm.getPassword());
         dtoUser.email(registrationForm.getEmail());
-        registrationFacade.register(dtoUser);
+        dtoUser.systemRole(SystemRole.USER);
+
+        try {
+            registrationFacade.register(dtoUser);
+        } catch (Exception ignored) {
+            return "registration";
+        }
 
         return "redirect:/login.html";
     }

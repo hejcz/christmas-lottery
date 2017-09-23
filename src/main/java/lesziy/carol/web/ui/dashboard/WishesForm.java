@@ -4,15 +4,18 @@ import lesziy.carol.domain.lottery.DtoWishRecipient;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 class WishesForm {
 
-    private String name;
+    private List<DtoWishRecipient> wishes;
 
     WishesForm(Collection<DtoWishRecipient> dtoWishRecipients) {
-        name = "Default";
+        wishes = new ArrayList<>(dtoWishRecipients);
     }
+
 }

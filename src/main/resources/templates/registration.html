@@ -1,33 +1,37 @@
+<!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:replace="header"></div>
 <body>
-<h1 th:text="#{label.form.title}">form</h1>
-<form th:object="${registrationForm}" method="POST">
-    <div>
-        <label th:text="#{label.userDto.username}">first</label>
-        <input th:field="*{username}"/>
-        <p th:each="error: ${#fields.errors('username')}"
-           th:text="${error}">Validation error</p>
-    </div>
-    <div>
-        <label th:text="#{label.userDto.email}">email</label>
-        <input type="email" th:field="*{email}"/>
-        <p th:each="error : ${#fields.errors('email')}"
-           th:text="${error}">Validation error</p>
-    </div>
-    <div>
-        <label th:text="#{label.userDto.password}">password</label>
-        <input type="password" th:field="*{password}"/>
-        <p th:each="error : ${#fields.errors('password')}"
-           th:text="${error}">Validation error</p>
-    </div>
-    <div>
-        <label th:text="#{label.userDto.confirmPass}">confirm</label>
-        <input type="password" th:field="*{matchingPassword}"/>
-    </div>
-    <button type="submit" th:text="#{label.form.submit}">submit</button>
-</form>
+<div th:replace="nav"></div>
+<div class="container">
 
-<a th:href="@{/login.html}" th:text="#{label.form.loginLink}">login</a>
+    <div class="starter-template">
+        <form th:action="@{/register}"  method="POST" class="form-register" >
+            <h2 class="form-signin-heading" th:text="'Zarejestruj się'"></h2>
+            <label for="inputLogin" class="sr-only" th:text="Login" ></label>
+            <input id="inputLogin" class="form-control" placeholder="Login"
+                   th:name="'username'" required="" autofocus="" />
+            <label for="inputPassword" class="sr-only" th:text="Hasło"></label>
+            <input id="inputPassword" class="form-control" placeholder="Password"
+                   required="" th:name="'password'" type="password" />
+            <label for="inputMatchingPassword" class="sr-only" th:text="Hasło"></label>
+            <input id="inputMatchingPassword" class="form-control" placeholder="Retype password"
+                   required="" th:name="'matchingPassword'" type="password" />
+            <label for="inputEmail" class="sr-only" th:text="Hasło"></label>
+            <input id="inputEmail" class="form-control" placeholder="Email"
+                   required="" th:name="'email'" type="email" />
+            <label for="inputName" class="sr-only" th:text="Imię"></label>
+            <input id="inputName" class="form-control" placeholder="First name"
+                   th:name="'name'" required="" autofocus="" />
+            <label for="inputSurname" class="sr-only" th:text="Nazwisko"></label>
+            <input id="inputSurname" class="form-control" placeholder="Last name"
+                   th:name="'surname'" required="" autofocus="" />
+            <button class="btn btn-lg btn-primary btn-block" type="submit"
+                    th:text="#{label.login.form.submit}">Zaloguj się</button>
+        </form>
+    </div>
+
+</div>
+<div th:replace="js"></div>
 </body>
 </html>

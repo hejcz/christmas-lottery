@@ -13,7 +13,7 @@ public interface UserFacade {
 
     DbUser findById(Integer id);
 
-    Optional<DtoUser> loggedUser();
-
     DtoUser loggedUserOrException();
+
+    boolean isLoggedUserAdmin();
 }
