@@ -6,15 +6,20 @@
 <div class="container">
 
     <div th:if="${!isAdmin}">
-        <table class="table">
-            <thead>
-            <th>Moje prezenty</th>
-            </thead>
-            <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.domain.lottery.DtoWishRecipient>"*/-->
-            <tr th:each="myWish : ${myWishes}">
-                <td th:text="${myWish.text()}"></td>
-            </tr>
-        </table>
+        <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.web.ui.dashboard.WishesForm>"*/-->
+        <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
+            <table class="table">
+                <thead>
+                <th>Moje prezenty</th>
+                </thead>
+                <tr>
+                    <td>
+                        <input type="text" th:field="*{name}" />
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" th:value="Zapisz"/>
+        </form>
 
         <!--/*@thymesVar id="hasRecipient" type="java.lang.Boolean"*/-->
         <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
@@ -25,7 +30,7 @@
             </th>
             </thead>
             <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
-                <td th:text="${myWish.text()}"></td>
+                <td th:text="${myWish.getText()}"></td>
             </tr>
         </table>
     </div>

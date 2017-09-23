@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -49,6 +50,12 @@ class DashboardController {
         if (canPerformLottery()) {
             lotteryFacade.performLottery();
         }
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/editWishes")
+    public String editWishes(@ModelAttribute WishesForm wishesForm) {
+        System.out.println(wishesForm);
         return "redirect:/dashboard";
     }
 

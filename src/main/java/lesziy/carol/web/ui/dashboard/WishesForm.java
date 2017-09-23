@@ -1,23 +1,18 @@
 package lesziy.carol.web.ui.dashboard;
 
 import lesziy.carol.domain.lottery.DtoWishRecipient;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
+@Data
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Getter
 class WishesForm {
-    @NotNull
-    public DtoWishRecipient[] wishes;
 
-    WishesForm(Collection<DtoWishRecipient> wishes) {
-        this.wishes = wishes.toArray(new DtoWishRecipient[wishes.size()]);
+    private String name;
+
+    WishesForm(Collection<DtoWishRecipient> dtoWishRecipients) {
+        name = "Default";
     }
 }
