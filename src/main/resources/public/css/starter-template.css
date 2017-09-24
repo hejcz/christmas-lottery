@@ -1,0 +1,74 @@
+body {
+    padding-top: 5rem;
+    /*background: #9dd3d5;*/
+}
+
+.starter-template {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+button + button {
+    margin-left: 10px;
+}
+
+input[readonly] {
+    cursor: not-allowed;
+}
+
+.other-buttons {
+    padding: 0 .75rem;
+}
+
+#admin-actions {
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#admin-actions form {
+    margin-bottom: 5px;
+}
+
+#recipient-info div {
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-signin #inputLogin {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-register {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-register input {
+    border-radius: 0;
+}
+
+.form-register input[name=username] {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+
+.form-register input[name=surname] {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    margin-bottom: 10px;
+}
