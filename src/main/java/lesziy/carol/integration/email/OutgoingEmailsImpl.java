@@ -25,9 +25,9 @@ class OutgoingEmailsImpl implements OutgoingEmails {
             message.setSubject("Zmiany na liście życzeń wylosowanej osoby");
             message.setText(String.format("%s\n\n%s\n\n%s\n\n%s\n\n%s",
                 "Wylosowana przez Ciebie osoba dokonała zmian na liście życzeń",
-                "Lista życzeń przed edycją:",
+                "Poprzednia lista życzeń:",
                 formatWishes(wishesUpdate.getOldWishes()),
-                "Lista życzeń po edycji:",
+                "Aktualna lista życzeń:",
                 formatWishes(wishesUpdate.getNewWishes())));
         });
     }
