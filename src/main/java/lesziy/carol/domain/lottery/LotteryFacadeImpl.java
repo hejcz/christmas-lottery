@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import lesziy.carol.domain.user.DbUser;
 import lesziy.carol.domain.user.UserFacadeImpl;
-import lesziy.carol.web.email.OutgoingEmails;
+import lesziy.carol.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

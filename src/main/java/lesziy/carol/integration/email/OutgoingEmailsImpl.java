@@ -1,4 +1,4 @@
-package lesziy.carol.web.email;
+package lesziy.carol.integration.email;
 
 import lesziy.carol.domain.lottery.DtoWishRecipient;
 import lesziy.carol.domain.lottery.WishesUpdate;
