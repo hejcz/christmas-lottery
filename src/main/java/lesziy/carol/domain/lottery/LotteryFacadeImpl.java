@@ -3,7 +3,7 @@ package lesziy.carol.domain.lottery;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import lesziy.carol.domain.user.DbUser;
-import lesziy.carol.domain.user.UserFacadeImpl;
+import lesziy.carol.domain.user.UserFacade;
 import lesziy.carol.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LotteryFacadeImpl implements LotteryFacade {
 
-    private final UserFacadeImpl userFacade;
+    private final UserFacade userFacade;
 
     private final MatchingEngine matchingEngine;
 
@@ -33,16 +33,17 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private final WishesRepository wishesRepository;
 
     @Override
-    public void performLottery() {
-        Users users = new Users(users());
+    public void performLottery(Collection<Integer> participatingUsersIds) {
+        Users users = new Users(users(participatingUsersIds));
         if (users.moreThanOne()) {
             matchRepository.save(lotteryResults(users));
         }
     }
 
-    private Set<User> users() {
+    private Set<User> users(Collection<Integer> participatingUsersIds) {
         return userFacade.loadUsers()
             .stream()
+            .filter(dtoUser -> participatingUsersIds.contains(dtoUser.id()))
             .map(userDto -> User.with(userDto.id()))
             .collect(Collectors.toSet());
     }

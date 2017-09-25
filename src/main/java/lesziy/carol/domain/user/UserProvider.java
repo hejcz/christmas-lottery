@@ -14,10 +14,9 @@ class UserProvider {
     private final UserRepository userRepository;
 
     Collection<DtoUser> all() {
-        return userRepository.findAll()
+        return userRepository.findBySystemRole(SystemRole.USER)
             .stream()
             .map(DbUser::toDto)
-            .filter(dtoUser -> SystemRole.USER.equals(dtoUser.systemRole()))
             .collect(Collectors.toSet());
     }
 

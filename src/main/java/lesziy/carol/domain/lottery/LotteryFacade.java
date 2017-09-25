@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface LotteryFacade {
 
-    void performLottery();
+    void performLottery(Collection<Integer> participatingUsersIds);
 
     boolean annualLotteryNotPerformedYet();
 

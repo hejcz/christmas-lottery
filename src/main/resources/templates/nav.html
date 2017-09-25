@@ -3,7 +3,7 @@
 <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item active" sec:authorize="!isAuthenticated()">
                 <a class="nav-link" th:href="@{/}">Home</a>
             </li>
             <li class="nav-item" sec:authorize="!isAuthenticated()">

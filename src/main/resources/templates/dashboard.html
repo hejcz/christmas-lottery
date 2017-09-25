@@ -5,83 +5,60 @@
 <div th:replace="nav"></div>
 <div class="container">
 
-    <div th:if="${!isAdmin}">
 
-        <div th:id="recipient-info" th:classappend="text-white">
-            <div th:class="bg-success" th:if="${recipientWithWishes != null}">
-                W tym roku prezent ode mnie otrzyma
-                <span th:text="${recipientWithWishes.recipient()}"></span>
-            </div>
-            <div th:class="bg-warning" th:unless="${recipientWithWishes != null}">
-                W tym roku losowanie jeszcze się nie odbyło
-            </div>
+
+    <div th:id="recipient-info" th:classappend="text-white">
+        <div th:class="bg-success" th:if="${recipientWithWishes != null}">
+            W tym roku prezent ode mnie otrzyma
+            <span th:text="${recipientWithWishes.recipient()}"></span>
         </div>
+        <div th:class="bg-warning" th:unless="${recipientWithWishes != null}">
+            W tym roku losowanie jeszcze się nie odbyło
+        </div>
+    </div>
 
-        <!--/*@thymesVar id="hasRecipient" type="java.lang.Boolean"*/-->
-        <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
-        <table class="table mt-2" th:if="${hasRecipient}">
+    <!--/*@thymesVar id="hasRecipient" type="java.lang.Boolean"*/-->
+    <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
+    <table class="table mt-2" th:if="${hasRecipient}">
+        <thead>
+        <th>Propozycje
+        </th>
+        </thead>
+        <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
+            <td th:text="${myWish.getText()}"></td>
+        </tr>
+    </table>
+
+    <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.web.ui.dashboard.WishesForm>"*/-->
+    <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
+        <table id="my-wishes" class="table">
             <thead>
-            <th>Propozycje
-            </th>
+            <th >Moje życzenia</th>
+            <th ></th>
             </thead>
-            <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
-                <td th:text="${myWish.getText()}"></td>
+            <tbody>
+            <tr th:each="name, idx : *{wishes}">
+                <td th:hidden="true">
+                    <input type="text" th:field="*{wishes[__${idx.index}__].id}"/>
+                </td>
+                <td th:class="|w-75 wish-text|">
+                    <input type="text" th:class="form-control" th:field="*{wishes[__${idx.index}__].text}" readonly="" />
+                </td>
+                <td th:class="w-25">
+                    <div th:class="float-right">
+                        <button type="button" class="btn btn-info edit-wish">Edytuj</button>
+                        <button type="button" class="btn btn-danger remove-wish">Usuń</button>
+                    </div>
+                </td>
             </tr>
+            </tbody>
         </table>
-
-        <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.web.ui.dashboard.WishesForm>"*/-->
-        <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
-            <table id="my-wishes" class="table">
-                <thead>
-                <th >Moje życzenia</th>
-                <th ></th>
-                </thead>
-                <tbody>
-                <tr th:each="name, idx : *{wishes}">
-                    <td th:hidden="true">
-                        <input type="text" th:field="*{wishes[__${idx.index}__].id}"/>
-                    </td>
-                    <td th:class="|w-75 wish-text|">
-                        <input type="text" th:class="form-control" th:field="*{wishes[__${idx.index}__].text}" readonly="" />
-                    </td>
-                    <td th:class="w-25">
-                        <div th:class="float-right">
-                            <button type="button" class="btn btn-info edit-wish">Edytuj</button>
-                            <button type="button" class="btn btn-danger remove-wish">Usuń</button>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div th:class="other-buttons">
-                <button type="button" class="btn add-wish">Nowe życzenie</button>
-                <button class="btn btn-primary">Zapisz</button>
-            </div>
-        </form>
-    </div>
-
-    <!--/*@thymesVar id="isAdmin" type="java.lang.Boolean"*/-->
-    <!--/*@thymesVar id="canPerformLottery" type="java.lang.Boolean"*/-->
-    <div th:if="${isAdmin}">
-        <div id="admin-actions">
-            <form th:action="@{/dashboard/lottery}" th:method="POST">
-                <button class="btn btn-primary btn-xs btn-block"
-                        th:classappend="${!canPerformLottery}? 'disabled'"
-                        th:type="Submit"
-                        th:disabled="${!canPerformLottery}">
-                    Start the lottery
-                </button>
-            </form>
-            <form th:action="@{/dashboard/resetLottery}" th:method="POST">
-                <button class="btn btn-danger btn-xs btn-block"
-                        th:classappend="${canPerformLottery}? 'disabled'"
-                        th:type="Submit"
-                        th:disabled="${canPerformLottery}">
-                    Reset lottery
-                </button>
-            </form>
+        <div th:class="other-buttons">
+            <button type="button" class="btn add-wish">Nowe życzenie</button>
+            <button class="btn btn-primary">Zapisz</button>
         </div>
-    </div>
+    </form>
+
 
 </div>
 <div th:replace="js"></div>

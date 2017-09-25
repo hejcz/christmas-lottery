@@ -33,5 +33,9 @@ public class DtoUser {
             systemRole
         );
     }
+
+    public String formatName() {
+        return String.format("%s %s", name, surname);
+    }
 }
 

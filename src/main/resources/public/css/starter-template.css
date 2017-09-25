@@ -20,14 +20,20 @@ input[readonly] {
     padding: 0 .75rem;
 }
 
-#admin-actions {
-    max-width: 200px;
+.admin-actions {
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#admin-actions form {
-    margin-bottom: 5px;
+.admin-actions form {
+    margin-top: 5px;
+}
+
+.admin-actions button {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 200px;
 }
 
 #recipient-info div {
