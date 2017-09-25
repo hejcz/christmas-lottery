@@ -44,6 +44,9 @@ window.onload = () => {
                     placeholder="Mam nadzieję, że pod choinką będzie..."/>
             </td>
             <td>
+                <button type="button" class="selected-elem btn rank-third rank">TROCHĘ</button>
+            </td>
+            <td>
                 <div class="float-right">
                     <button type="button" class="btn btn-info edit-wish">Edytuj</button>
                     <button type="button" class="btn btn-danger remove-wish">Usuń</button>
@@ -55,4 +58,30 @@ window.onload = () => {
         orderWishes();
     });
 
+    function setupRankSelector() {
+        $(".selected-elem")
+            .off("click")
+            .on("click", e => {
+                let selectedRank = $(e.target);
+                selectedRank.css("opacity", "0.1");
+                let menu = selectedRank.parent().find('.rank-select');
+                menu.slideToggle(300);
+
+                menu.find("button").off('click');
+                menu.find("button").on('click', e => {
+                    menu.slideToggle({
+                        duration: 200,
+                        complete: () => {
+                            menu.find("button").off('click');
+                            let newRank = $(e.target).clone();
+                            selectedRank.replaceWith(newRank);
+                            newRank.addClass('selected-elem');
+                            setupRankSelector();
+                        }
+                    });
+                });
+        });
+    }
+
+    setupRankSelector();
 };

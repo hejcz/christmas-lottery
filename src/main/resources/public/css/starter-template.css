@@ -8,9 +8,9 @@ body {
     text-align: center;
 }
 
-button + button {
-    margin-left: 10px;
-}
+/*button + button {*/
+    /*margin-left: 10px;*/
+/*}*/
 
 input[readonly] {
     cursor: not-allowed;
@@ -77,4 +77,37 @@ input[readonly] {
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
     margin-bottom: 10px;
+}
+
+.rank {
+    font-weight: bold;
+    font-size: 0.75rem;
+    width: 120px;
+    height: 38px;
+}
+
+.rank-first {
+    color: #fff;
+    background-color: #FFD700;
+    border-color: #FFD700;
+}
+
+.rank-second {
+    color: #fff;
+    background-color: #A8A8A8;
+    border-color: #A8A8A8;
+}
+
+.rank-third {
+    color: #fff;
+    background-color: #965A38;
+    border-color: #965A38;
+}
+
+.rank-select {
+    display: none;
+}
+
+.rank-select button {
+    margin-top: 10px;
 }

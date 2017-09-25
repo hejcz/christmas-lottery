@@ -33,18 +33,27 @@
     <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
         <table id="my-wishes" class="table">
             <thead>
-            <th >Moje życzenia</th>
-            <th ></th>
+            <th class="col-sm-7">Moje życzenia</th>
+            <th class="col-sm-2">Chcę to</th>
+            <th class="col-sm-3"></th>
             </thead>
             <tbody>
             <tr th:each="name, idx : *{wishes}">
                 <td th:hidden="true">
                     <input type="text" th:field="*{wishes[__${idx.index}__].id}"/>
                 </td>
-                <td th:class="|w-75 wish-text|">
+                <td th:class="|wish-text|">
                     <input type="text" th:class="form-control" th:field="*{wishes[__${idx.index}__].text}" readonly="" />
                 </td>
-                <td th:class="w-25">
+                <td >
+                    <button type="button" class="selected-elem btn rank-third rank">TROCHĘ</button>
+                    <div class="rank-select">
+                        <button type="button" class="btn rank-first rank">NAJBARDZIEJ</button>
+                        <button type="button" class="btn rank-second rank">BARDZO</button>
+                        <button type="button" class="btn rank-third rank">TROCHĘ</button>
+                    </div>
+                </td>
+                <td >
                     <div th:class="float-right">
                         <button type="button" class="btn btn-info edit-wish">Edytuj</button>
                         <button type="button" class="btn btn-danger remove-wish">Usuń</button>
