@@ -6,14 +6,17 @@
 <div class="container">
 
 
-
+    <!--/*@thymesVar id="lotteryPerformed" type="java.lang.Boolean"*/-->
     <div th:id="recipient-info" th:classappend="text-white">
-        <div th:class="bg-success" th:if="${recipientWithWishes != null}">
+        <div th:class="bg-success" th:if="${lotteryPerformed and recipientWithWishes != null}">
             W tym roku prezent ode mnie otrzyma
             <span th:text="${recipientWithWishes.recipient()}"></span>
         </div>
-        <div th:class="bg-warning" th:unless="${recipientWithWishes != null}">
+        <div th:class="bg-warning" th:if="${!lotteryPerformed and recipientWithWishes == null}">
             W tym roku losowanie jeszcze się nie odbyło
+        </div>
+        <div th:class="bg-danger" th:if="${lotteryPerformed and recipientWithWishes == null}">
+            Losowanie się odbyło, ale nie wziąłeś w nim udziału.
         </div>
     </div>
 

@@ -111,3 +111,7 @@ input[readonly] {
 .rank-select button {
     margin-top: 10px;
 }
+
+.selected-elem {
+    cursor: pointer;
+}

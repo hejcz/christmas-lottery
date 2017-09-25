@@ -41,10 +41,15 @@ window.onload = () => {
         <tr>
             <td class="wish-text">
                 <input type="text" class="form-control" name="wishes[0].text" 
-                    placeholder="Mam nadzieję, że pod choinką będzie..."/>
+                    placeholder="Mam nadzieję, że pod choinką znajdę..."/>
             </td>
             <td>
                 <button type="button" class="selected-elem btn rank-third rank">TROCHĘ</button>
+                <div class="rank-select">
+                    <button type="button" class="btn rank-first rank">NAJBARDZIEJ</button>
+                    <button type="button" class="btn rank-second rank">BARDZO</button>
+                    <button type="button" class="btn rank-third rank">TROCHĘ</button>
+                </div>
             </td>
             <td>
                 <div class="float-right">
@@ -56,14 +61,24 @@ window.onload = () => {
         $(appendedTr).find("input").focus();
         assignEditRemove();
         orderWishes();
+        setupRankSelector();
     });
 
     function setupRankSelector() {
+
         $(".selected-elem")
             .off("click")
             .on("click", e => {
+                // inne powinny się chyba zwinąć
                 let selectedRank = $(e.target);
-                selectedRank.css("opacity", "0.1");
+
+                // do poprawy
+                if (selectedRank.css("opacity") === "1") {
+                    selectedRank.css("opacity", "0.1");
+                } else {
+                    selectedRank.css("opacity", "1");
+                }
+
                 let menu = selectedRank.parent().find('.rank-select');
                 menu.slideToggle(300);
 

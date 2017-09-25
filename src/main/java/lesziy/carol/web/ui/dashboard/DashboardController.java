@@ -52,6 +52,7 @@ class DashboardController {
         Optional<DtoWishGiver> recipientWishes = lotteryFacade.actualRecipientWishes(loggedUserId);
         model.addAttribute("myWishes", new WishesForm(lotteryFacade.wishesOf(loggedUserId)));
         model.addAttribute("hasRecipient", recipientWishes.isPresent());
+        model.addAttribute("lotteryPerformed", !lotteryFacade.annualLotteryNotPerformedYet());
         recipientWishes.ifPresent(recipient -> model.addAttribute("recipientWithWishes", recipient));
     }
 
