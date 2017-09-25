@@ -37,10 +37,11 @@ window.onload = () => {
     assignEditRemove();
 
     $(".add-wish").click(e => {
-        $("#my-wishes").find("tbody").append(`
+        let appendedTr = $("#my-wishes").find("tbody").append(`
         <tr>
             <td class="wish-text">
-                <input type="text" class="form-control" name="wishes[0].text" />
+                <input type="text" class="form-control" name="wishes[0].text" 
+                    placeholder="Mam nadzieję, że pod choinką będzie..."/>
             </td>
             <td>
                 <div class="float-right">
@@ -49,6 +50,7 @@ window.onload = () => {
                 </div>
             </td>
         </tr>`);
+        $(appendedTr).find("input").focus();
         assignEditRemove();
         orderWishes();
     });
