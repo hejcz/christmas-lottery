@@ -26,6 +26,6 @@ interface MatchRepository extends CrudRepository<DbMatch, Integer> {
     void deleteByCreationDateBetween(Timestamp startOfCurrentYear, Timestamp startOfNextYear);
 
     Optional<DbMatch> findByRecipientIdAndCreationDateIsBetween(Integer recipientId,
-                                                                  Timestamp startOfCurrentYear,
-                                                                  Timestamp startOfNextYear);
+                                                                Timestamp startOfCurrentYear,
+                                                                Timestamp startOfNextYear);
 }

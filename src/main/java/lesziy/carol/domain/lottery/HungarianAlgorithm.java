@@ -32,7 +32,7 @@ import java.util.Arrays;
  * one worker and so that no worker is assigned to more than one job in such a
  * manner so as to minimize the total cost of completing the jobs.
  * <p>
- *
+ * <p>
  * An assignment for a cost matrix that has more workers than jobs will
  * necessarily include unassigned workers, indicated by an assignment value of
  * -1; in no other circumstance will there be unassigned workers. Similarly, an
@@ -41,7 +41,7 @@ import java.util.Arrays;
  * jobs. For completeness, an assignment for a square cost matrix will give
  * exactly one unique worker to each job.
  * <p>
- *
+ * <p>
  * This version of the Hungarian algorithm runs in time O(n^3), where n is the
  * maximum among the number of workers and the number of jobs.
  *
@@ -60,11 +60,10 @@ class HungarianAlgorithm {
     /**
      * Construct an instance of the algorithm.
      *
-     * @param costMatrix
-     *          the cost matrix, where matrix[i][j] holds the cost of assigning
-     *          worker i to job j, for all i, j. The cost matrix must not be
-     *          irregular in the sense that all rows must be the same length; in
-     *          addition, all entries must be non-infinite numbers.
+     * @param costMatrix the cost matrix, where matrix[i][j] holds the cost of assigning
+     *                   worker i to job j, for all i, j. The cost matrix must not be
+     *                   irregular in the sense that all rows must be the same length; in
+     *                   addition, all entries must be non-infinite numbers.
      */
     HungarianAlgorithm(double[][] costMatrix) {
         this.dim = Math.max(costMatrix.length, costMatrix[0].length);
@@ -123,8 +122,8 @@ class HungarianAlgorithm {
      * Execute the algorithm.
      *
      * @return the minimum cost matching of workers to jobs based upon the
-     *         provided cost matrix. A matching value of -1 indicates that the
-     *         corresponding worker is unassigned.
+     * provided cost matrix. A matching value of -1 indicates that the
+     * corresponding worker is unassigned.
      */
     int[] execute() {
     /*
@@ -162,7 +161,7 @@ class HungarianAlgorithm {
      * more zero-slack edges (the labels of committed jobs are simultaneously
      * decreased by the same amount in order to maintain a feasible labeling).
      * <p>
-     *
+     * <p>
      * The runtime of a single phase of the algorithm is O(n^2), where n is the
      * dimension of the internal square cost matrix, since each edge is visited at
      * most once and since increasing the labeling is accomplished in time O(n) by
@@ -212,7 +211,7 @@ class HungarianAlgorithm {
                 for (int j = 0; j < dim; j++) {
                     if (parentWorkerByCommittedJob[j] == -1) {
                         double slack = costMatrix[worker][j] - labelByWorker[worker]
-                                - labelByJob[j];
+                            - labelByJob[j];
                         if (minSlackValueByJob[j] > slack) {
                             minSlackValueByJob[j] = slack;
                             minSlackWorkerByJob[j] = worker;
@@ -224,7 +223,6 @@ class HungarianAlgorithm {
     }
 
     /**
-     *
      * @return the first unmatched worker or {@link #dim} if none.
      */
     private int fetchUnmatchedWorker() {
@@ -245,7 +243,7 @@ class HungarianAlgorithm {
         for (int w = 0; w < dim; w++) {
             for (int j = 0; j < dim; j++) {
                 if (matchJobByWorker[w] == -1 && matchWorkerByJob[j] == -1
-                        && costMatrix[w][j] - labelByWorker[w] - labelByJob[j] == 0) {
+                    && costMatrix[w][j] - labelByWorker[w] - labelByJob[j] == 0) {
                     match(w, j);
                 }
             }
@@ -257,8 +255,7 @@ class HungarianAlgorithm {
      * workers and jobs sets and by initializing the slack arrays to the values
      * corresponding to the specified root worker.
      *
-     * @param w
-     *          the worker at which to root the next phase.
+     * @param w the worker at which to root the next phase.
      */
     private void initializePhase(int w) {
         Arrays.fill(committedWorkers, false);
@@ -266,7 +263,7 @@ class HungarianAlgorithm {
         committedWorkers[w] = true;
         for (int j = 0; j < dim; j++) {
             minSlackValueByJob[j] = costMatrix[w][j] - labelByWorker[w]
-                    - labelByJob[j];
+                - labelByJob[j];
             minSlackWorkerByJob[j] = w;
         }
     }

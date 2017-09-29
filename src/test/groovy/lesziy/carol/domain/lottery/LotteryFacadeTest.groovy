@@ -10,11 +10,11 @@ class LotteryFacadeTest extends Specification {
     private matchingEngine = new HungarianAlgorithmMatchingEngine()
 
     def "User can't gift himself"() {
-        def users =  usersWithIds([1, 2, 3])
+        def users = usersWithIds([1, 2, 3])
         when:
         def matches = performMatching(users, emptyHistory())
         then:
-        matches.every {it.giver() != it.recipient()}
+        matches.every { it.giver() != it.recipient() }
     }
 
     def "Every user gifts someone"() {
@@ -22,7 +22,7 @@ class LotteryFacadeTest extends Specification {
         when:
         def matches = performMatching(users, emptyHistory())
         then:
-        matches.collect {it.giver()}.sort() == users.sort()
+        matches.collect { it.giver() }.sort() == users.sort()
     }
 
     def "Every user receives gift"() {
@@ -30,11 +30,11 @@ class LotteryFacadeTest extends Specification {
         when:
         def matches = performMatching(users, emptyHistory())
         then:
-        matches.collect {it.recipient()}.sort() == users.sort()
+        matches.collect { it.recipient() }.sort() == users.sort()
     }
 
     def "User won't gift same person two years in row if possible"() {
-        def users =  [8, 9, 1, 5].collect{User.with(it)}.toSet()
+        def users = [8, 9, 1, 5].collect { User.with(it) }.toSet()
         def history = toHistory([[[8, 9], [9, 1], [1, 5], [5, 8]]])
         def historicalMatches = flattenHistory(history)
         when:
@@ -46,25 +46,25 @@ class LotteryFacadeTest extends Specification {
     }
 
     def "User will gift same person if other selection is not possible"() {
-        def users =  [8, 9, 1, 5].collect{User.with(it)}.toSet()
+        def users = [8, 9, 1, 5].collect { User.with(it) }.toSet()
         def history = toHistory([
-            [[8, 9], [9, 1], [1, 5], [5, 8]],
-            [[8, 1], [9, 8], [5, 9]]
+                [[8, 9], [9, 1], [1, 5], [5, 8]],
+                [[8, 1], [9, 8], [5, 9]]
         ])
         when:
         def matches = performMatching(users, history)
         then:
         // wtedy 8 ma po raz pierwszy 5
         matches.contains(new Match(User.with(9), User.with(8))) ||
-        // wtedy 9 ma po raz pierwszy 5
-        matches.contains(new Match(User.with(8), User.with(9)))
+                // wtedy 9 ma po raz pierwszy 5
+                matches.contains(new Match(User.with(8), User.with(9)))
     }
 
     def "Engine takes into consider multiple years"() {
-        def users =  [1, 2, 3, 4].collect{User.with(it)}.toSet()
+        def users = [1, 2, 3, 4].collect { User.with(it) }.toSet()
         def history = toHistory([
-            [[1, 2], [2, 3], [3, 4], [4, 1]],
-            [[2, 4], [4, 2], [1, 3], [3, 1]]
+                [[1, 2], [2, 3], [3, 4], [4, 1]],
+                [[2, 4], [4, 2], [1, 3], [3, 1]]
         ])
         when:
         def matches = performMatching(users, history)
@@ -86,13 +86,13 @@ class LotteryFacadeTest extends Specification {
 
     MatchesHistory toHistory(List<List<List<Integer>>> history) {
         new MatchesHistory(
-            history.collect {
-                new AnnualMatches(
-                    it.collect {
-                        historicalMatch -> match(historicalMatch[0], historicalMatch[1])
-                    }
-                )
-            }
+                history.collect {
+                    new AnnualMatches(
+                            it.collect {
+                                historicalMatch -> match(historicalMatch[0], historicalMatch[1])
+                            }
+                    )
+                }
         )
     }
 

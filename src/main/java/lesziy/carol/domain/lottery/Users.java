@@ -9,7 +9,8 @@ import java.util.Set;
 
 @Value
 class Users {
-    @Getter(AccessLevel.NONE) Set<User> users;
+    @Getter(AccessLevel.NONE)
+    Set<User> users;
 
     Set<User> toSet() {
         return new HashSet<>(users);

@@ -12,8 +12,9 @@ interface MatchingEngine {
      * - każdy użytkownik dostaje od kogoś prezent
      * - użytkownik nie może kupować prezentu sobie
      * - dąży do tego, żeby każdy użytkownik obdarowywał pozostałych podobną liczbę razy, np.
-     *   (2 x A -> B, 2 x A -> C) zamiast (3 x A -> B, 1 x A -> C)
-     * @param users - użytkownicy biorący udział w losowaniu.
+     * (2 x A -> B, 2 x A -> C) zamiast (3 x A -> B, 1 x A -> C)
+     *
+     * @param users          - użytkownicy biorący udział w losowaniu.
      * @param matchesHistory - historia wyników losowania.
      * @return wyniki losowania.
      */

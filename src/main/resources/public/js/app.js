@@ -4,20 +4,12 @@ window.onload = () => {
         $("#my-wishes").find("tbody")
             .find("tr")
             .each((trIndex, tr) => {
-                $(tr).find(".wish-text > input")
+                $(tr).find("input")
                     .each((tdIndex, tdDom) => {
                             let td = $(tdDom);
                             td.prop("name", td.prop("name").replace(/\[\d+]/, `[${trIndex}]`));
                         })
             });
-    }
-
-    function assignEditWish() {
-        let editBtns = $(".edit-wish");
-        editBtns.off('click');
-        editBtns.click(e => {
-            $(e.target).closest("tr").find(".wish-text input").prop('readonly', (i, v) => !v);
-        });
     }
 
     function assignRemoveWish() {
@@ -30,7 +22,6 @@ window.onload = () => {
     }
 
     function assignEditRemove() {
-        assignEditWish();
         assignRemoveWish();
     }
 
@@ -44,16 +35,13 @@ window.onload = () => {
                     placeholder="Mam nadzieję, że pod choinką znajdę..."/>
             </td>
             <td>
-                <button type="button" class="selected-elem btn rank-third rank">TROCHĘ</button>
-                <div class="rank-select">
-                    <button type="button" class="btn rank-first rank">NAJBARDZIEJ</button>
-                    <button type="button" class="btn rank-second rank">BARDZO</button>
-                    <button type="button" class="btn rank-third rank">TROCHĘ</button>
+                <input type="number" class="form-control" name="wishes[0].power" value="1" hidden="true"/>
+                <div class="rate-wish">
+                    <img class="power-tree opacity-tree" src="image/tree-min.png"/>
                 </div>
             </td>
             <td>
                 <div class="float-right">
-                    <button type="button" class="btn btn-info edit-wish">Edytuj</button>
                     <button type="button" class="btn btn-danger remove-wish">Usuń</button>
                 </div>
             </td>
@@ -61,42 +49,75 @@ window.onload = () => {
         $(appendedTr).find("input").focus();
         assignEditRemove();
         orderWishes();
-        setupRankSelector();
+        fillPowerTrees();
+        rebindPower();
     });
 
-    function setupRankSelector() {
+    fillPowerTrees();
+    rebindPower();
 
-        $(".selected-elem")
-            .off("click")
-            .on("click", e => {
-                // inne powinny się chyba zwinąć
-                let selectedRank = $(e.target);
+    function fillPowerTrees() {
+        $(".rate-wish").each((idx, elem) => {
+            let treeIcon = $(elem).find(".power-tree");
 
-                // do poprawy
-                if (selectedRank.css("opacity") === "1") {
-                    selectedRank.css("opacity", "0.1");
-                } else {
-                    selectedRank.css("opacity", "1");
-                }
+            if (treeIcon.length === 5) {
+                return;
+            }
 
-                let menu = selectedRank.parent().find('.rank-select');
-                menu.slideToggle(300);
-
-                menu.find("button").off('click');
-                menu.find("button").on('click', e => {
-                    menu.slideToggle({
-                        duration: 200,
-                        complete: () => {
-                            menu.find("button").off('click');
-                            let newRank = $(e.target).clone();
-                            selectedRank.replaceWith(newRank);
-                            newRank.addClass('selected-elem');
-                            setupRankSelector();
-                        }
-                    });
-                });
+            for (let i = 1; i < 5; i++) {
+                let clone = treeIcon.clone();
+                $(elem).append(clone);
+            }
+            let initialPower = $(elem).parent().find(".form-control").attr("value");
+            $(elem).parent()
+                .find(".power-tree")
+                .slice(0, initialPower)
+                .removeClass("opacity-tree");
         });
     }
 
-    setupRankSelector();
+    function rebindPower() {
+        $(".rate-wish")
+            .off("mouseleave")
+            .on("mouseleave", e => {
+                let initialPower = $(e.target).closest(".rate-wish").parent().find(".form-control").attr("value");
+                $(e.target)
+                    .closest(".rate-wish")
+                    .find(".power-tree")
+                    .addClass("opacity-tree")
+                    .slice(0, initialPower)
+                    .removeClass("opacity-tree");
+            });
+
+        $(".power-tree")
+            .off("mouseenter mouseleave mouseclick")
+            .on("mouseenter", function(e) {
+                let x = e.offsetX, y = e.offsetY;
+                colorNTrees(e.target, treeIndex(e.target));
+            }).on("mouseleave", function(e) {
+            let x = e.offsetX, y = e.offsetY;
+            if (x === -1) {
+                $(this).addClass("opacity-tree");
+            }
+        }).on("click", e => {
+            $(e.target).closest(".rate-wish").parent().find(".form-control").attr("value", treeIndex(e.target));
+        });
+    }
+
+    function treeIndex(treeElement) {
+        return $(treeElement)
+            .closest(".rate-wish")
+            .find(".power-tree")
+            .index($(treeElement)) + 1;
+
+    }
+
+    function colorNTrees(targetTree, n) {
+        $(targetTree)
+            .closest(".rate-wish")
+            .find(".power-tree")
+            .addClass("opacity-tree")
+            .slice(0, n)
+            .removeClass("opacity-tree");
+    }
 };

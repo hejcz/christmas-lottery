@@ -6,16 +6,17 @@
 <div class="container">
 
     <div class="starter-template">
-        <form th:action="@{/login}"  method="POST" class="form-signin" >
+        <form th:action="@{/login}" method="POST" class="form-signin">
             <h2 class="form-signin-heading" th:text="#{label.login.form.title}"></h2>
-            <label for="inputLogin" class="sr-only" th:text="#{label.login.userDto.username}" ></label>
+            <label for="inputLogin" class="sr-only" th:text="#{label.login.userDto.username}"></label>
             <input id="inputLogin" class="form-control" placeholder="Login"
-                   th:name="'username'" required="" autofocus="" />
+                   th:name="'username'" required="" autofocus=""/>
             <label for="inputPassword" class="sr-only" th:text="#{label.login.userDto.password}"></label>
             <input id="inputPassword" class="form-control" placeholder="Hasło"
-                   required="" th:name="'password'" type="password" />
+                   required="" th:name="'password'" type="password"/>
             <button class="btn btn-lg btn-primary btn-block" type="submit"
-                    th:text="#{label.login.form.submit}">Zaloguj się</button>
+                    th:text="#{label.login.form.submit}">Zaloguj się
+            </button>
         </form>
     </div>
 

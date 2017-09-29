@@ -8,16 +8,22 @@ import javax.validation.constraints.Size;
 
 @Data
 class RegistrationForm {
-    @NotNull @Size(min = 5, max = 20)
+    @NotNull
+    @Size(min = 5, max = 20)
     private String username;
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private String password;
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private String matchingPassword;
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private String email;
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private String name;
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private String surname;
 }

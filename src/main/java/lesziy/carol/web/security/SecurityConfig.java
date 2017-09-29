@@ -21,15 +21,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .antMatchers("/api/**").hasAnyAuthority(registered())
             .antMatchers("/dashboard").hasAnyAuthority(registered())
-                .antMatchers("/**").permitAll()
+            .antMatchers("/**").permitAll()
             .and()
-                .formLogin()
-                    .defaultSuccessUrl("/dashboard")
-                    .loginPage("/login")
+            .formLogin()
+            .defaultSuccessUrl("/dashboard")
+            .loginPage("/login")
             .and()
-                .authenticationProvider(authenticationProvider())
+            .authenticationProvider(authenticationProvider())
             .csrf()
-                .disable();
+            .disable();
     }
 
     private String[] registered() {

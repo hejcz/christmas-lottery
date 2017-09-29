@@ -9,7 +9,7 @@ body {
 }
 
 /*button + button {*/
-    /*margin-left: 10px;*/
+/*margin-left: 10px;*/
 /*}*/
 
 input[readonly] {
@@ -52,6 +52,7 @@ input[readonly] {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
+
 .form-signin input[type="password"] {
     margin-bottom: 10px;
     border-top-left-radius: 0;
@@ -114,4 +115,12 @@ input[readonly] {
 
 .selected-elem {
     cursor: pointer;
+}
+
+.power-tree {
+    width: 30px;
+}
+
+.opacity-tree {
+    opacity: 0.25;
 }

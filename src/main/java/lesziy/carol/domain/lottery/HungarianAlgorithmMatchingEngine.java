@@ -74,9 +74,10 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
     /**
      * Przekształca wynik algorytmu węgierskiego w pary kupujący - obdarowywany.
+     *
      * @param hungarianAlgorithmResult jednowymiarowa tablica gdzie wartość j pod tym i-tym indeksem
      *                                 oznacza że i-ty użytkownik kupuje j-temu użytkownikowi prezent.
-     * @param orderedUsers uporządkowana kolekcja użytkowników.
+     * @param orderedUsers             uporządkowana kolekcja użytkowników.
      */
     private AnnualMatches convertToAnnualMatches(int[] hungarianAlgorithmResult,
                                                  OrderedUsers orderedUsers) {
