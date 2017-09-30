@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -92,6 +93,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     public Collection<DtoWishRecipient> wishesOf(Integer recipientId) {
         return wishesRepository.findByRecipientId(recipientId)
             .stream()
+            .sorted(Comparator.comparing(DbWish::getCreationDate))
             .map(DbWish::toDto)
             .collect(Collectors.toList());
     }
@@ -123,6 +125,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
         DbUser recipient = userFacade.findById(recipientId);
         wishesRepository.save(
             wishes.stream()
+                // poprawić żeby był update timestamp
                 .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient))
                 .collect(Collectors.toList())
         );
