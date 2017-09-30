@@ -14,13 +14,20 @@ import java.time.LocalDateTime;
 public class DtoWishRecipient {
     private Integer id;
     private String text;
+    private String url;
     private Integer power;
+
+    public boolean hasUrl() {
+        return url != null
+            && !"".equals(url);
+    }
 
     DbWish toDb(DbUser recipient) {
         return new DbWish(
             id,
             Timestamp.valueOf(LocalDateTime.now()),
             text,
+            url,
             power,
             recipient
         );

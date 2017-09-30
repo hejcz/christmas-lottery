@@ -30,9 +30,11 @@ window.onload = () => {
     $(".add-wish").click(e => {
         let appendedTr = $("#my-wishes").find("tbody").append(`
         <tr>
-            <td class="wish-text">
-                <input type="text" class="form-control" name="wishes[0].text" 
+            <td class="wish-details">
+                <input type="text" class="form-control wish-text" name="wishes[0].text" 
                     placeholder="Mam nadzieję, że pod choinką znajdę..."/>
+                    <input type="text" class="form-control wish-url" name="wishes[0].url" 
+                    placeholder="Adres URL"/>
             </td>
             <td>
                 <input type="number" class="form-control" name="wishes[0].power" value="1" hidden="true"/>
@@ -89,7 +91,7 @@ window.onload = () => {
                     .removeClass("opacity-tree");
             });
 
-        $(".power-tree")
+        $(".rate-wish .power-tree")
             .off("mouseenter mouseleave mouseclick")
             .on("mouseenter", function(e) {
                 let x = e.offsetX, y = e.offsetY;

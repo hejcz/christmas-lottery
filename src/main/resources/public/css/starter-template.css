@@ -124,3 +124,14 @@ input[readonly] {
 .opacity-tree {
     opacity: 0.25;
 }
+
+.wish-text {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.wish-url {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top-width: 0;
+}

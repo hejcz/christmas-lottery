@@ -30,12 +30,14 @@ class DbWish {
     private Timestamp creationDate;
     @Column(nullable = false)
     private String text;
+    @Column
+    private String url;
     @Column(nullable = false)
     private Integer power;
     @ManyToOne(fetch = FetchType.EAGER)
     private DbUser recipient;
 
     DtoWishRecipient toDto() {
-        return new DtoWishRecipient(id, text, power);
+        return new DtoWishRecipient(id, text, url == null ? "" : url, power);
     }
 }

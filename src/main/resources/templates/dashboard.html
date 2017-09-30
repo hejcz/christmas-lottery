@@ -24,19 +24,33 @@
     <!--/*@thymesVar id="recipientWithWishes" type="lesziy.carol.domain.lottery.DtoWishGiver"*/-->
     <table class="table mt-2" th:if="${hasRecipient}">
         <thead>
-        <th>Propozycje
-        </th>
+        <th style="width: 60%">Życzenia wylosowanej osoby</th>
+        <th style="width: 40%">Moc</th>
         </thead>
+        <tbody>
         <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
-            <td th:text="${myWish.getText()}"></td>
+            <td>
+                <div th:text="${myWish.getText()}"></div>
+                <div th:if="${myWish.hasUrl()}"><a th:target="blank" th:href="${myWish.getUrl()}">Link do przedmiotu</a></div>
+            </td>
+            <td>
+                <div th:class="rated-wish">
+                    <img th:each="i : ${#numbers.sequence(1, myWish.getPower())}" th:class="|power-tree|" th:src="@{image/tree-min.png}"/>
+                    <span th:if="${myWish.getPower() &lt; 5}">
+                        <img th:each="i : ${#numbers.sequence(myWish.getPower() + 1, 5)}"
+                             th:class="|power-tree opacity-tree|" th:src="@{image/tree-min.png}"/>
+                    </span>
+                </div>
+            </td>
         </tr>
+        </tbody>
     </table>
 
     <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.web.ui.dashboard.WishesForm>"*/-->
     <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
         <table id="my-wishes" class="table">
             <thead>
-            <th style="width: 60%">Lista życzeń</th>
+            <th style="width: 60%">Moja lista życzeń</th>
             <th style="width: 30%">Moc</th>
             <th style="width: 10%"></th>
             </thead>
@@ -45,8 +59,13 @@
                 <td th:hidden="true">
                     <input type="text" th:field="*{wishes[__${idx.index}__].id}"/>
                 </td>
-                <td th:class="|wish-text|">
-                    <input type="text" th:class="form-control" th:field="*{wishes[__${idx.index}__].text}" />
+                <td th:class="|wish-details|">
+                    <input type="text" th:class="|form-control wish-text|"
+                           th:placeholder="|Mam nadzieję, że pod choinką znajdę...|"
+                           th:field="*{wishes[__${idx.index}__].text}" />
+                    <input type="text" th:class="|form-control wish-url|"
+                           th:placeholder="'Adres URL'"
+                           th:field="*{wishes[__${idx.index}__].url}" />
                 </td>
                 <td>
                     <input type="number" th:class="form-control" th:field="*{wishes[__${idx.index}__].power}" th:hidden="true"/>
