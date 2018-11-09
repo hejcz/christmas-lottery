@@ -8,9 +8,6 @@
     <div class="starter-template">
         <form th:action="@{/register}" method="POST" class="form-register">
             <h2 class="form-signin-heading" th:text="'Zarejestruj się'"></h2>
-            <label for="inputLogin" class="sr-only" th:text="Login"></label>
-            <input id="inputLogin" class="form-control" placeholder="Login"
-                   th:name="'username'" required="" autofocus=""/>
             <label for="inputPassword" class="sr-only" th:text="Hasło"></label>
             <input id="inputPassword" class="form-control" placeholder="Hasło"
                    required="" th:name="'password'" type="password"/>

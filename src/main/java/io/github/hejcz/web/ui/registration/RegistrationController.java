@@ -34,7 +34,7 @@ class RegistrationController {
         System.out.println(registrationForm);
 
         DtoUser dtoUser = new DtoUser();
-        dtoUser.login(registrationForm.getUsername());
+        dtoUser.login(registrationForm.getEmail());
         dtoUser.name(registrationForm.getName());
         dtoUser.surname(registrationForm.getSurname());
         dtoUser.password(registrationForm.getPassword());
