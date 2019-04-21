@@ -1,6 +1,5 @@
 package io.github.hejcz.web.ui.dashboard;
 
-import com.google.common.base.Strings;
 import io.github.hejcz.domain.lottery.DtoWishGiver;
 import io.github.hejcz.domain.user.DtoUser;
 import io.github.hejcz.domain.user.UserFacade;
@@ -19,12 +18,13 @@ import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/dashboard")
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
+@RequiredArgsConstructor
 class DashboardController {
 
     private final LotteryFacade lotteryFacade;
@@ -102,8 +102,9 @@ class DashboardController {
 
         return wishesForm.getWishes()
             .stream()
-            .filter(dtoWishRecipient -> dtoWishRecipient != null)
-            .filter(dtoWishRecipient -> !Strings.isNullOrEmpty(dtoWishRecipient.getText()))
+            .filter(Objects::nonNull)
+            .filter(dtoWishRecipient -> dtoWishRecipient.getText() != null)
+            .filter(dtoWishRecipient -> !Objects.equals(dtoWishRecipient.getText(), ""))
             .collect(Collectors.toList());
     }
 

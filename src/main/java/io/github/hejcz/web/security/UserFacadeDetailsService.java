@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 class UserFacadeDetailsService implements UserDetailsService {
 
     private final UserFacadeImpl userFacade;

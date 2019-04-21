@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 class UserSecurityFacadeImpl implements UserSecurityFacade {
 
     private final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository;

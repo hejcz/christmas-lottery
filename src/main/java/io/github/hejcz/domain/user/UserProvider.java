@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 class UserProvider {
     private final UserRepository userRepository;
 
@@ -30,6 +30,6 @@ class UserProvider {
     }
 
     DbUser byId(Integer id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("no user with id " + id));
     }
 }

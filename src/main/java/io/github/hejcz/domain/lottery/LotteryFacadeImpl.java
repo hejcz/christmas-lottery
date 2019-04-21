@@ -1,26 +1,26 @@
 package io.github.hejcz.domain.lottery;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.domain.user.DbUser;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.expression.Sets;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class LotteryFacadeImpl implements LotteryFacade {
 
     private final UserFacade userFacade;
@@ -37,7 +37,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     public void performLottery(Collection<Integer> participatingUsersIds) {
         Users users = new Users(users(participatingUsersIds));
         if (users.moreThanOne()) {
-            matchRepository.save(lotteryResults(users));
+            matchRepository.saveAll(lotteryResults(users));
         }
     }
 
@@ -114,7 +114,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     private void removeInvalidWishes(Collection<DbWish> wishesInDb, Set<Integer> ids) {
-        wishesRepository.delete(
+        wishesRepository.deleteAll(
             wishesInDb.stream()
                 .filter(wish -> !ids.contains(wish.getId()))
                 .collect(Collectors.toSet())
@@ -123,7 +123,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     private void saveWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
         DbUser recipient = userFacade.findById(recipientId);
-        wishesRepository.save(
+        wishesRepository.saveAll(
             wishes.stream()
                 // poprawić żeby był update timestamp
                 .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient))
@@ -139,7 +139,13 @@ public class LotteryFacadeImpl implements LotteryFacade {
             .map(DtoWishRecipient::getText)
             .collect(Collectors.toSet());
         return oldWishes.size() != newWishes.size()
-            || !Sets.difference(oldWishes, newWishes).isEmpty();
+            || !setDifference(oldWishes, newWishes).isEmpty();
+    }
+
+    private <T> Set<? extends T> setDifference(Set<? extends T> first, Set<? extends T> second) {
+        return first.stream()
+            .filter(it -> !second.contains(it))
+            .collect(Collectors.toSet());
     }
 
     private void sendEmailToGiverIfAssigned(Integer recipientId,
@@ -150,7 +156,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
                 email,
                 new WishesUpdate(
                     oldWishes,
-                    ImmutableList.copyOf(newWishes)
+                    new ArrayList<>(newWishes)
                 )
             )
         );

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserFacadeImpl implements UserFacade {
 
     private final UserProvider userProvider;

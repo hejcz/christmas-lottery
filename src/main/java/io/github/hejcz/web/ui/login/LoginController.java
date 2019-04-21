@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Controller
 @RequestMapping("/login")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 class LoginController {
 
     private final AuthenticationPredicates authenticationPredicates =
