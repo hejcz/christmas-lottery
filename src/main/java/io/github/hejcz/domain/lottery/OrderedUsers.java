@@ -11,6 +11,9 @@ import java.util.Map;
  */
 @Value
 class OrderedUsers {
+
     Map<Integer, User> ordinalToUser;
+
     Map<User, OrderedUser> userToOrderedUser;
+
 }

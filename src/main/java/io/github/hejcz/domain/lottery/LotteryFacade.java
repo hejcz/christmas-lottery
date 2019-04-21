@@ -16,4 +16,5 @@ public interface LotteryFacade {
     void updateWishes(Integer recipientId, Collection<DtoWishRecipient> wishes);
 
     void deleteActualLottery();
+
 }

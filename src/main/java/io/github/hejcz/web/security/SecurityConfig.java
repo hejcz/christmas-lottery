@@ -1,7 +1,6 @@
 package io.github.hejcz.web.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,4 +47,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

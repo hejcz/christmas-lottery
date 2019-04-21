@@ -19,4 +19,5 @@ interface MatchingEngine {
      * @return wyniki losowania.
      */
     AnnualMatches match(Users users, MatchesHistory matchesHistory);
+
 }

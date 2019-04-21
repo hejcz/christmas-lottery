@@ -7,15 +7,6 @@ import java.util.Random;
 
 public class RandomString {
 
-    /**
-     * Generate a random string.
-     */
-    public String nextString() {
-        for (int idx = 0; idx < buf.length; ++idx)
-            buf[idx] = symbols[random.nextInt(symbols.length)];
-        return new String(buf);
-    }
-
     private static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     private static final String lower = upper.toLowerCase(Locale.ROOT);
@@ -57,6 +48,15 @@ public class RandomString {
      */
     private RandomString() {
         this(21);
+    }
+
+    /**
+     * Generate a random string.
+     */
+    public String nextString() {
+        for (int idx = 0; idx < buf.length; ++idx)
+            buf[idx] = symbols[random.nextInt(symbols.length)];
+        return new String(buf);
     }
 
 }

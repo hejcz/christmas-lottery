@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 class LotteryForm {
+
     private List<UserForLottery> usersForLottery;
 
     LotteryForm(Collection<DtoUser> users) {
@@ -18,4 +19,5 @@ class LotteryForm {
             .map(UserForLottery::from)
             .collect(Collectors.toList());
     }
+
 }

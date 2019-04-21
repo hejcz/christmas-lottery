@@ -16,4 +16,5 @@ public interface UserFacade {
     DtoUser loggedUserOrException();
 
     boolean isLoggedUserAdmin();
+
 }

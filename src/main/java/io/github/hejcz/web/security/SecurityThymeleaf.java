@@ -11,4 +11,5 @@ class SecurityThymeleaf {
     public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();
     }
+
 }

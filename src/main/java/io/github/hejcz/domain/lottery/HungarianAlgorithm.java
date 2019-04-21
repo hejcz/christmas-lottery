@@ -48,13 +48,21 @@ import java.util.Arrays;
  * @author Kevin L. Stern
  */
 class HungarianAlgorithm {
+
     private final double[][] costMatrix;
+
     private final int rows, cols, dim;
+
     private final double[] labelByWorker, labelByJob;
+
     private final int[] minSlackWorkerByJob;
+
     private final double[] minSlackValueByJob;
+
     private final int[] matchJobByWorker, matchWorkerByJob;
+
     private final int[] parentWorkerByCommittedJob;
+
     private final boolean[] committedWorkers;
 
     /**
@@ -126,11 +134,11 @@ class HungarianAlgorithm {
      * corresponding worker is unassigned.
      */
     int[] execute() {
-    /*
-     * Heuristics to improve performance: Reduce rows and columns by their
-     * smallest element, compute an initial non-zero dual feasible solution and
-     * create a greedy matching from workers to jobs of the cost matrix.
-     */
+        /*
+         * Heuristics to improve performance: Reduce rows and columns by their
+         * smallest element, compute an initial non-zero dual feasible solution and
+         * create a greedy matching from workers to jobs of the cost matrix.
+         */
         reduce();
         computeInitialFeasibleSolution();
         greedyMatch();
@@ -186,9 +194,9 @@ class HungarianAlgorithm {
             }
             parentWorkerByCommittedJob[minSlackJob] = minSlackWorker;
             if (matchWorkerByJob[minSlackJob] == -1) {
-        /*
-         * An augmenting path has been found.
-         */
+                /*
+                 * An augmenting path has been found.
+                 */
                 int committedJob = minSlackJob;
                 int parentWorker = parentWorkerByCommittedJob[committedJob];
                 while (true) {
@@ -202,10 +210,10 @@ class HungarianAlgorithm {
                 }
                 return;
             } else {
-        /*
-         * Update slack values since we increased the size of the committed
-         * workers set.
-         */
+                /*
+                 * Update slack values since we increased the size of the committed
+                 * workers set.
+                 */
                 int worker = matchWorkerByJob[minSlackJob];
                 committedWorkers[worker] = true;
                 for (int j = 0; j < dim; j++) {
@@ -331,4 +339,5 @@ class HungarianAlgorithm {
             }
         }
     }
+
 }

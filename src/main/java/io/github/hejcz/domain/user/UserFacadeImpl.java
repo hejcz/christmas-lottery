@@ -1,7 +1,6 @@
 package io.github.hejcz.domain.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -50,4 +49,5 @@ public class UserFacadeImpl implements UserFacade {
     public boolean isLoggedUserAdmin() {
         return loggedUserOrException().systemRole() == SystemRole.ADMIN;
     }
+
 }

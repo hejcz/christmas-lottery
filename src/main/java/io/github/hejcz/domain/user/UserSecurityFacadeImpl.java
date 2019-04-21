@@ -2,7 +2,6 @@ package io.github.hejcz.domain.user;
 
 import io.github.hejcz.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +13,11 @@ import java.util.Optional;
 class UserSecurityFacadeImpl implements UserSecurityFacade {
 
     private final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository;
+
     private final UserRepository userRepository;
+
     private final OutgoingEmails outgoingEmails;
+
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -52,4 +54,5 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
             email
         );
     }
+
 }

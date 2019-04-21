@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 class NewPasswordForm {
+
     private String password;
+
     private String repeatedPassword;
+
 }

@@ -1,7 +1,6 @@
 package io.github.hejcz.domain.user;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -11,6 +10,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 class UserProvider {
+
     private final UserRepository userRepository;
 
     Collection<DtoUser> all() {
@@ -32,4 +32,5 @@ class UserProvider {
     DbUser byId(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("no user with id " + id));
     }
+
 }

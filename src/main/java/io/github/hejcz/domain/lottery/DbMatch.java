@@ -21,14 +21,18 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 class DbMatch {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
     private Integer id;
+
     @CreationTimestamp
     private Timestamp creationDate;
+
     @ManyToOne
     private DbUser giver;
+
     @ManyToOne
     private DbUser recipient;
 
@@ -36,4 +40,5 @@ class DbMatch {
         this.giver = giver;
         this.recipient = recipient;
     }
+
 }

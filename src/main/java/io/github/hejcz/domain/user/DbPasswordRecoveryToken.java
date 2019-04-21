@@ -17,12 +17,16 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 class DbPasswordRecoveryToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
     private Integer id;
+
     @Column(nullable = false)
     private String token;
+
     @Column(nullable = false)
     private String email;
+
 }

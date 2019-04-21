@@ -17,4 +17,5 @@ class WishesForm {
     WishesForm(Collection<DtoWishRecipient> dtoWishRecipients) {
         wishes = new ArrayList<>(dtoWishRecipients);
     }
+
 }

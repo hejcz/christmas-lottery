@@ -1,12 +1,11 @@
 package io.github.hejcz.web.ui.dashboard;
 
 import io.github.hejcz.domain.lottery.DtoWishGiver;
-import io.github.hejcz.domain.user.DtoUser;
-import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.domain.lottery.DtoWishRecipient;
 import io.github.hejcz.domain.lottery.LotteryFacade;
+import io.github.hejcz.domain.user.DtoUser;
+import io.github.hejcz.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

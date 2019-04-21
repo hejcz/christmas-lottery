@@ -2,7 +2,6 @@ package io.github.hejcz.web.ui.login;
 
 import io.github.hejcz.domain.user.UserSecurityFacade;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +38,7 @@ class LoginController {
     @Transactional
     public String recover(PasswordRecoveryRequestForm passwordRecoveryRequestForm) {
         userSecurityFacade.requestPasswordRecovery(httpRequest.getRequestURL().toString(),
-                                                   passwordRecoveryRequestForm.getEmail());
+            passwordRecoveryRequestForm.getEmail());
         return "redirect:/login";
     }
 
@@ -55,7 +54,7 @@ class LoginController {
     @PostMapping("/password/change")
     public String changePassword(NewPasswordForm newPasswordForm) {
         if (Objects.equals(newPasswordForm.getPassword(), newPasswordForm.getRepeatedPassword())
-              && newPasswordForm.getPassword() != null) {
+            && newPasswordForm.getPassword() != null) {
             userSecurityFacade.newPassword(
                 httpRequest.getSession().getAttribute("recovery_email").toString(),
                 newPasswordForm.getPassword()

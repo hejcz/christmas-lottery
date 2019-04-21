@@ -9,5 +9,7 @@ import java.util.Optional;
 interface PasswordRecoveryTokenRepository extends CrudRepository<DbPasswordRecoveryToken, Integer> {
 
     Optional<DbPasswordRecoveryToken> findByToken(String token);
+
     void deleteByEmail(String email);
+
 }

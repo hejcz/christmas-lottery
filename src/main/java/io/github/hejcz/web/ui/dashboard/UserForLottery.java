@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 // Musi być publiczna żeby BeanUtils miało do niej dostęp
 public class UserForLottery {
+
     private Integer id;
+
     private String formattedName;
+
     private boolean consideredInLottery;
 
     static UserForLottery from(DtoUser dtoUser) {
@@ -21,4 +24,5 @@ public class UserForLottery {
             true
         );
     }
+
 }

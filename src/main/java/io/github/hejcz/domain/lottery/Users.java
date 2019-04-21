@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Value
 class Users {
+
     @Getter(AccessLevel.NONE)
     Set<User> users;
 
@@ -19,4 +20,5 @@ class Users {
     boolean moreThanOne() {
         return users.size() > 1;
     }
+
 }

@@ -3,7 +3,6 @@ package io.github.hejcz.web.security;
 import io.github.hejcz.domain.user.DtoUser;
 import io.github.hejcz.domain.user.UserFacadeImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,4 +32,5 @@ class UserFacadeDetailsService implements UserDetailsService {
             Collections.singletonList(new SimpleGrantedAuthority(user.isAdmin() ? "ADMIN" : "USER"))
         );
     }
+
 }

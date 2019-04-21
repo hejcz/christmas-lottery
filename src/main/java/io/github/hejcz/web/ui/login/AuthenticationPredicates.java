@@ -10,4 +10,5 @@ public class AuthenticationPredicates {
             && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
             && !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken);
     }
+
 }

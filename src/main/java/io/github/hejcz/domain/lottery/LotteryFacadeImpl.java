@@ -1,19 +1,16 @@
 package io.github.hejcz.domain.lottery;
 
-import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.domain.user.DbUser;
+import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.expression.Sets;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -180,4 +177,5 @@ public class LotteryFacadeImpl implements LotteryFacade {
             userFacade.findById(match.recipient().getId())
         );
     }
+
 }

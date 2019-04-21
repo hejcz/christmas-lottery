@@ -7,7 +7,7 @@
 
 
     <!--/*@thymesVar id="lotteryPerformed" type="java.lang.Boolean"*/-->
-    <div th:id="recipient-info" th:classappend="text-white">
+    <div th:classappend="text-white" th:id="recipient-info">
         <div th:class="bg-success" th:if="${lotteryPerformed and recipientWithWishes != null}">
             W tym roku prezent ode mnie otrzyma
             <span th:text="${recipientWithWishes.recipient()}"></span>
@@ -31,14 +31,16 @@
         <tr th:each="myWish : ${recipientWithWishes.recipientWishes()}">
             <td>
                 <div th:text="${myWish.getText()}"></div>
-                <div th:if="${myWish.hasUrl()}"><a th:target="blank" th:href="${myWish.getUrl()}">Link do przedmiotu</a></div>
+                <div th:if="${myWish.hasUrl()}"><a th:href="${myWish.getUrl()}" th:target="blank">Link do przedmiotu</a>
+                </div>
             </td>
             <td>
                 <div th:class="rated-wish">
-                    <img th:each="i : ${#numbers.sequence(1, myWish.getPower())}" th:class="|power-tree|" th:src="@{image/tree-min.png}"/>
+                    <img th:class="|power-tree|" th:each="i : ${#numbers.sequence(1, myWish.getPower())}"
+                         th:src="@{image/tree-min.png}"/>
                     <span th:if="${myWish.getPower() &lt; 5}">
-                        <img th:each="i : ${#numbers.sequence(myWish.getPower() + 1, 5)}"
-                             th:class="|power-tree opacity-tree|" th:src="@{image/tree-min.png}"/>
+                        <img th:class="|power-tree opacity-tree|"
+                             th:each="i : ${#numbers.sequence(myWish.getPower() + 1, 5)}" th:src="@{image/tree-min.png}"/>
                     </span>
                 </div>
             </td>
@@ -47,8 +49,8 @@
     </table>
 
     <!--/*@thymesVar id="myWishes" type="java.util.Collection<lesziy.carol.web.ui.dashboard.WishesForm>"*/-->
-    <form action="#" th:action="@{/dashboard/editWishes}" th:object="${myWishes}" th:method="post">
-        <table id="my-wishes" class="table">
+    <form action="#" th:action="@{/dashboard/editWishes}" th:method="post" th:object="${myWishes}">
+        <table class="table" id="my-wishes">
             <thead>
             <th style="width: 60%">Moja lista życzeń</th>
             <th style="width: 30%">Moc</th>
@@ -57,32 +59,33 @@
             <tbody>
             <tr th:each="name, idx : *{wishes}">
                 <td th:hidden="true">
-                    <input type="text" th:field="*{wishes[__${idx.index}__].id}"/>
+                    <input th:field="*{wishes[__${idx.index}__].id}" type="text"/>
                 </td>
                 <td th:class="|wish-details|">
-                    <input type="text" th:class="|form-control wish-text|"
+                    <input th:class="|form-control wish-text|" th:field="*{wishes[__${idx.index}__].text}"
                            th:placeholder="|Mam nadzieję, że pod choinką znajdę...|"
-                           th:field="*{wishes[__${idx.index}__].text}" />
-                    <input type="text" th:class="|form-control wish-url|"
+                           type="text"/>
+                    <input th:class="|form-control wish-url|" th:field="*{wishes[__${idx.index}__].url}"
                            th:placeholder="'Adres URL'"
-                           th:field="*{wishes[__${idx.index}__].url}" />
+                           type="text"/>
                 </td>
                 <td>
-                    <input type="number" th:class="form-control" th:field="*{wishes[__${idx.index}__].power}" th:hidden="true"/>
+                    <input th:class="form-control" th:field="*{wishes[__${idx.index}__].power}" th:hidden="true"
+                           type="number"/>
                     <div th:class="rate-wish">
                         <img th:class="|power-tree opacity-tree|" th:src="@{image/tree-min.png}"/>
                     </div>
                 </td>
                 <td>
                     <div th:class="float-right">
-                        <button type="button" class="btn btn-danger remove-wish">Usuń</button>
+                        <button class="btn btn-danger remove-wish" type="button">Usuń</button>
                     </div>
                 </td>
             </tr>
             </tbody>
         </table>
         <div th:class="other-buttons">
-            <button type="button" class="btn add-wish">Nowe życzenie</button>
+            <button class="btn add-wish" type="button">Nowe życzenie</button>
             <button class="btn btn-primary">Zapisz</button>
         </div>
     </form>

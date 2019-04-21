@@ -28,4 +28,5 @@ interface MatchRepository extends CrudRepository<DbMatch, Integer> {
     Optional<DbMatch> findByRecipientIdAndCreationDateIsBetween(Integer recipientId,
                                                                 Timestamp startOfCurrentYear,
                                                                 Timestamp startOfNextYear);
+
 }

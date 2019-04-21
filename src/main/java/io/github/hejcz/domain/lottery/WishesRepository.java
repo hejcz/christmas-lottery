@@ -9,4 +9,5 @@ import java.util.Collection;
 interface WishesRepository extends CrudRepository<DbWish, Integer> {
 
     Collection<DbWish> findByRecipientId(Integer recipient);
+
 }

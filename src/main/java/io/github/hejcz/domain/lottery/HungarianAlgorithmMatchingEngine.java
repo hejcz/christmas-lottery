@@ -89,4 +89,5 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
                 .collect(Collectors.toList())
         );
     }
+
 }

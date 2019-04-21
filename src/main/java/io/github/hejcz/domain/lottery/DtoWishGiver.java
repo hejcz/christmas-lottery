@@ -12,6 +12,9 @@ import java.util.Collection;
 @AllArgsConstructor
 @Accessors(fluent = true)
 public class DtoWishGiver {
+
     private String recipient;
+
     private Collection<DtoWishRecipient> recipientWishes;
+
 }

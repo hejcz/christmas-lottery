@@ -6,25 +6,25 @@
 <div class="container">
 
     <div class="starter-template">
-        <form th:action="@{/register}" method="POST" class="form-register">
+        <form class="form-register" method="POST" th:action="@{/register}">
             <h2 class="form-signin-heading" th:text="'Zarejestruj się'"></h2>
-            <label for="inputPassword" class="sr-only" th:text="Hasło"></label>
-            <input id="inputPassword" class="form-control" placeholder="Hasło"
+            <label class="sr-only" for="inputPassword" th:text="Hasło"></label>
+            <input class="form-control" id="inputPassword" placeholder="Hasło"
                    required="" th:name="'password'" type="password"/>
-            <label for="inputMatchingPassword" class="sr-only" th:text="Hasło"></label>
-            <input id="inputMatchingPassword" class="form-control" placeholder="Powtórz hasło"
+            <label class="sr-only" for="inputMatchingPassword" th:text="Hasło"></label>
+            <input class="form-control" id="inputMatchingPassword" placeholder="Powtórz hasło"
                    required="" th:name="'matchingPassword'" type="password"/>
-            <label for="inputEmail" class="sr-only" th:text="Hasło"></label>
-            <input id="inputEmail" class="form-control" placeholder="Email"
+            <label class="sr-only" for="inputEmail" th:text="Hasło"></label>
+            <input class="form-control" id="inputEmail" placeholder="Email"
                    required="" th:name="'email'" type="email"/>
-            <label for="inputName" class="sr-only" th:text="Imię"></label>
-            <input id="inputName" class="form-control" placeholder="Imię"
-                   th:name="'name'" required="" autofocus=""/>
-            <label for="inputSurname" class="sr-only" th:text="Nazwisko"></label>
-            <input id="inputSurname" class="form-control" placeholder="Nazwisko"
-                   th:name="'surname'" required="" autofocus=""/>
-            <button class="btn btn-lg btn-primary btn-block" type="submit"
-                    th:text="#{label.login.form.submit}">Zarejestruj się
+            <label class="sr-only" for="inputName" th:text="Imię"></label>
+            <input autofocus="" class="form-control" id="inputName"
+                   placeholder="Imię" required="" th:name="'name'"/>
+            <label class="sr-only" for="inputSurname" th:text="Nazwisko"></label>
+            <input autofocus="" class="form-control" id="inputSurname"
+                   placeholder="Nazwisko" required="" th:name="'surname'"/>
+            <button class="btn btn-lg btn-primary btn-block" th:text="#{label.login.form.submit}"
+                    type="submit">Zarejestruj się
             </button>
         </form>
     </div>

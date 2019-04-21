@@ -6,16 +6,16 @@
 <div class="container">
 
     <div class="starter-template">
-        <form th:action="@{/login}" method="POST" class="form-signin">
+        <form class="form-signin" method="POST" th:action="@{/login}">
             <h2 class="form-signin-heading" th:text="#{label.login.form.title}"></h2>
-            <label for="inputLogin" class="sr-only" th:text="#{label.login.userDto.username}"></label>
-            <input id="inputLogin" class="form-control" placeholder="Login"
-                   th:name="'username'" required="" autofocus=""/>
-            <label for="inputPassword" class="sr-only" th:text="#{label.login.userDto.password}"></label>
-            <input id="inputPassword" class="form-control" placeholder="Hasło"
+            <label class="sr-only" for="inputLogin" th:text="#{label.login.userDto.username}"></label>
+            <input autofocus="" class="form-control" id="inputLogin"
+                   placeholder="Login" required="" th:name="'username'"/>
+            <label class="sr-only" for="inputPassword" th:text="#{label.login.userDto.password}"></label>
+            <input class="form-control" id="inputPassword" placeholder="Hasło"
                    required="" th:name="'password'" type="password"/>
-            <button class="btn btn-lg btn-primary btn-block" type="submit"
-                    th:text="#{label.login.form.submit}">Zaloguj się
+            <button class="btn btn-lg btn-primary btn-block" th:text="#{label.login.form.submit}"
+                    type="submit">Zaloguj się
             </button>
         </form>
         <a th:href="@{/login/password}">Nie pamiętam hasła</a>

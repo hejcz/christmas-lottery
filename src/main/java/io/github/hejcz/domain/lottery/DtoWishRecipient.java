@@ -12,9 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DtoWishRecipient {
+
     private Integer id;
+
     private String text;
+
     private String url;
+
     private Integer power;
 
     public boolean hasUrl() {
@@ -32,4 +36,5 @@ public class DtoWishRecipient {
             recipient
         );
     }
+
 }
