@@ -5,10 +5,14 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-public class WishesUpdate {
+public class WishListChange {
 
     List<DtoWishRecipient> oldWishes;
 
     List<DtoWishRecipient> newWishes;
+
+    public boolean wasEmptyBefore() {
+        return oldWishes.isEmpty();
+    }
 
 }

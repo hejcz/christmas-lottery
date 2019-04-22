@@ -3,21 +3,25 @@ package io.github.hejcz.domain.lottery;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
+    public static final int IMPOSSIBLE = Integer.MAX_VALUE;
+
     @Override
-    public AnnualMatches match(Group group, MatchesHistory matchesHistory) {
+    public AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
         OrderedUsers orderedUsers = orderUsers(group.toSet());
-        return performAssignment(matchesHistory, orderedUsers);
+        return performAssignment(matchesHistory, orderedUsers, forbiddenMatches);
     }
 
     /**
@@ -33,17 +37,19 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         List<User> shuffledUsers = new ArrayList<>(users);
         Collections.shuffle(shuffledUsers);
         Map<Integer, User> ordinalToUser = new HashMap<>();
-        Map<User, OrderedUser> userToOrderedUser = new HashMap<>();
+        Map<Integer, OrderedUser> idToOrderedUser = new HashMap<>();
         for (User user : shuffledUsers) {
             int ordinal = nextOrdinal++;
             ordinalToUser.put(ordinal, user);
-            userToOrderedUser.put(user, new OrderedUser(user, ordinal));
+            idToOrderedUser.put(user.getId(), new OrderedUser(user, ordinal));
         }
-        return new OrderedUsers(ordinalToUser, userToOrderedUser);
+        return new OrderedUsers(ordinalToUser, idToOrderedUser);
     }
 
-    private AnnualMatches performAssignment(MatchesHistory matchesHistory, OrderedUsers orderedUsers) {
-        double[][] costMatrix = createCostMatrix(matchesHistory, orderedUsers);
+    private AnnualMatches performAssignment(MatchesHistory matchesHistory,
+                                            OrderedUsers orderedUsers,
+                                            Collection<ForbiddenMatch> forbiddenMatches) {
+        double[][] costMatrix = createCostMatrix(matchesHistory, orderedUsers, forbiddenMatches);
         int[] algorithmResult = new HungarianAlgorithm(costMatrix).execute();
         return convertToAnnualMatches(algorithmResult, orderedUsers);
     }
@@ -52,22 +58,31 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
      * @return macierz kosztów będąca podawana na wejście algorytmu węgierskiego.
      * Kosztem jest liczba dopasowań w historii takich że i-ty user kupował prezent j-temu.
      */
-    private double[][] createCostMatrix(MatchesHistory matchesHistory, OrderedUsers users) {
-        Map<User, OrderedUser> userToOrderedUser = users.getUserToOrderedUser();
+    private double[][] createCostMatrix(MatchesHistory matchesHistory,
+                                        OrderedUsers users,
+                                        Collection<ForbiddenMatch> forbiddenMatches) {
+        Map<Integer, OrderedUser> userToOrderedUser = users.getUserToOrderedUser();
         double[][] matrix = new double[userToOrderedUser.size()][userToOrderedUser.size()];
 
         for (AnnualMatches annualMatches : matchesHistory.getAnnualMatches()) {
             for (Match match : annualMatches.getMatches()) {
-                OrderedUser giver = userToOrderedUser.get(match.giver());
-                OrderedUser recipient = userToOrderedUser.get(match.recipient());
+                OrderedUser giver = userToOrderedUser.get(match.giver().getId());
+                OrderedUser recipient = userToOrderedUser.get(match.recipient().getId());
                 ++matrix[giver.ordinal()][recipient.ordinal()];
             }
         }
 
         // nie można kupować prezentu samemu sobie
         for (int i = 0; i < matrix.length; i++) {
-            matrix[i][i] = Integer.MAX_VALUE;
+            matrix[i][i] = IMPOSSIBLE;
         }
+
+        forbiddenMatches.forEach(forbiddenMatch -> {
+            Integer first = userToOrderedUser.get(forbiddenMatch.firstUserId).ordinal();
+            Integer second = userToOrderedUser.get(forbiddenMatch.secondUserId).ordinal();
+            matrix[first][second] = IMPOSSIBLE;
+            matrix[second][first] = IMPOSSIBLE;
+        });
 
         return matrix;
     }

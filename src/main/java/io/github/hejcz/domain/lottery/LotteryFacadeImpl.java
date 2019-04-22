@@ -31,6 +31,8 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     private final WishesRepository wishesRepository;
 
+    private final ForbiddenMatchRepository forbiddenMatchRepository;
+
     @Override
     public void performLottery(Collection<Integer> participatingUsersIds) {
         Group group = new Group(users(participatingUsersIds));
@@ -50,7 +52,9 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private List<DbMatch> lotteryResults(Group group) {
         AnnualMatches history =
             new AnnualMatches(matchRepository.findAll().stream().map(DbMatch::asMatch).collect(Collectors.toSet()));
-        return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)))
+        Collection<ForbiddenMatch> forbiddenMatches =
+            forbiddenMatchRepository.findByFirstOrSecondIdIn(group.membersIds());
+        return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)), forbiddenMatches)
             .getMatches()
             .stream()
             .map(this::matchToDbMatch)
@@ -131,21 +135,9 @@ public class LotteryFacadeImpl implements LotteryFacade {
         );
     }
 
-    private boolean anythingChanged(List<DtoWishRecipient> wishesInDbDtos, Collection<DtoWishRecipient> wishes) {
-        Set<String> oldWishes = wishesInDbDtos.stream()
-            .map(DtoWishRecipient::getText)
-            .collect(Collectors.toSet());
-        Set<String> newWishes = wishes.stream()
-            .map(DtoWishRecipient::getText)
-            .collect(Collectors.toSet());
+    private boolean anythingChanged(Collection<DtoWishRecipient> oldWishes, Collection<DtoWishRecipient> newWishes) {
         return oldWishes.size() != newWishes.size()
-            || !setDifference(oldWishes, newWishes).isEmpty();
-    }
-
-    private <T> Set<? extends T> setDifference(Set<? extends T> first, Set<? extends T> second) {
-        return first.stream()
-            .filter(it -> !second.contains(it))
-            .collect(Collectors.toSet());
+            || oldWishes.stream().anyMatch(it -> !newWishes.contains(it));
     }
 
     private void sendEmailToGiverIfAssigned(Integer recipientId,
@@ -154,7 +146,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
         findGiverEmail(recipientId).ifPresent(email ->
             outgoingEmails.sendWishesUpdate(
                 email,
-                new WishesUpdate(
+                new WishListChange(
                     oldWishes,
                     new ArrayList<>(newWishes)
                 )

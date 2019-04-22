@@ -73,7 +73,7 @@ class LotteryFacadeTest extends Specification {
     }
 
     private Collection<Match> performMatching(Set<User> users, MatchesHistory matchesHistory) {
-        matchingEngine.match(new Group(users), matchesHistory).matches
+        matchingEngine.match(new Group(users), matchesHistory, []).matches
     }
 
     private static Set<User> usersWithIds(List<Integer> ids) {

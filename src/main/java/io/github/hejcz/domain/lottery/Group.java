@@ -6,6 +6,7 @@ import lombok.Value;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Value
 class Group {
@@ -19,6 +20,10 @@ class Group {
 
     boolean hasMultipleMembers() {
         return users.size() > 1;
+    }
+
+    Set<Integer> membersIds() {
+        return users.stream().map(User::getId).collect(Collectors.toSet());
     }
 
 }

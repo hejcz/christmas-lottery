@@ -1,5 +1,7 @@
 package io.github.hejcz.domain.lottery;
 
+import java.util.Collection;
+
 /**
  * Silnik wyznaczający, który użytkownik kupuje któremu prezent w danym roku.
  */
@@ -16,8 +18,9 @@ interface MatchingEngine {
      *
      * @param group          - użytkownicy biorący udział w losowaniu.
      * @param matchesHistory - historia wyników losowania.
+     * @param forbiddenMatches
      * @return wyniki losowania.
      */
-    AnnualMatches match(Group group, MatchesHistory matchesHistory);
+    AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches);
 
 }
