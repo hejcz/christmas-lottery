@@ -16,8 +16,8 @@ interface MatchingEngine {
      * - dąży do tego, żeby każdy użytkownik obdarowywał pozostałych podobną liczbę razy, np.
      * (2 x A -> B, 2 x A -> C) zamiast (3 x A -> B, 1 x A -> C)
      *
-     * @param group          - użytkownicy biorący udział w losowaniu.
-     * @param matchesHistory - historia wyników losowania.
+     * @param group            - użytkownicy biorący udział w losowaniu.
+     * @param matchesHistory   - historia wyników losowania.
      * @param forbiddenMatches
      * @return wyniki losowania.
      */

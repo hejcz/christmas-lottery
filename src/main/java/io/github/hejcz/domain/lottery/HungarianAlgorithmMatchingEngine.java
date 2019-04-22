@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
-    public static final int IMPOSSIBLE = Integer.MAX_VALUE;
+    private static final int IMPOSSIBLE = Integer.MAX_VALUE;
 
     @Override
     public AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
