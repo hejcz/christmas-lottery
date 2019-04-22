@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Value
-class Users {
+class Group {
 
     @Getter(AccessLevel.NONE)
     Set<User> users;
@@ -17,7 +17,7 @@ class Users {
         return new HashSet<>(users);
     }
 
-    boolean moreThanOne() {
+    boolean hasMultipleMembers() {
         return users.size() > 1;
     }
 

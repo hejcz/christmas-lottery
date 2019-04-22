@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 interface MatchRepository extends CrudRepository<DbMatch, Integer> {
 
+    Collection<DbMatch> findAll();
+
     Collection<DbMatch> findByGiverId(Integer giverId);
 
     Collection<DbMatch> findByCreationDateBetween(Timestamp lastYear, Timestamp nextYear);

@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +33,9 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     @Override
     public void performLottery(Collection<Integer> participatingUsersIds) {
-        Users users = new Users(users(participatingUsersIds));
-        if (users.moreThanOne()) {
-            matchRepository.saveAll(lotteryResults(users));
+        Group group = new Group(users(participatingUsersIds));
+        if (group.hasMultipleMembers()) {
+            matchRepository.saveAll(lotteryResults(group));
         }
     }
 
@@ -46,8 +47,10 @@ public class LotteryFacadeImpl implements LotteryFacade {
             .collect(Collectors.toSet());
     }
 
-    private List<DbMatch> lotteryResults(Users users) {
-        return matchingEngine.match(users, new MatchesHistory(new ArrayList<>()))
+    private List<DbMatch> lotteryResults(Group group) {
+        AnnualMatches history =
+            new AnnualMatches(matchRepository.findAll().stream().map(DbMatch::asMatch).collect(Collectors.toSet()));
+        return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)))
             .getMatches()
             .stream()
             .map(this::matchToDbMatch)

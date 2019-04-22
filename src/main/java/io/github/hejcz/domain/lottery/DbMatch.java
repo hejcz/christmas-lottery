@@ -41,4 +41,8 @@ class DbMatch {
         this.recipient = recipient;
     }
 
+    Match asMatch() {
+        return new Match(User.with(giver.getId()), User.with(recipient.getId()));
+    }
+
 }

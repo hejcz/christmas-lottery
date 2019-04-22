@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
     @Override
-    public AnnualMatches match(Users users, MatchesHistory matchesHistory) {
-        OrderedUsers orderedUsers = orderUsers(users.toSet());
+    public AnnualMatches match(Group group, MatchesHistory matchesHistory) {
+        OrderedUsers orderedUsers = orderUsers(group.toSet());
         return performAssignment(matchesHistory, orderedUsers);
     }
 
