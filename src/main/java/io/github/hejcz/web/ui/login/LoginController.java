@@ -53,11 +53,11 @@ class LoginController {
 
     @PostMapping("/password/change")
     public String changePassword(NewPasswordForm newPasswordForm) {
-        if (Objects.equals(newPasswordForm.getPassword(), newPasswordForm.getRepeatedPassword())
-            && newPasswordForm.getPassword() != null) {
+        if (Objects.equals(newPasswordForm.password, newPasswordForm.repeatedPassword)
+            && newPasswordForm.password != null) {
             userSecurityFacade.newPassword(
                 httpRequest.getSession().getAttribute("recovery_email").toString(),
-                newPasswordForm.getPassword()
+                newPasswordForm.password
             );
         }
         return "redirect:/login";
