@@ -25,6 +25,7 @@ spring:
             required: true
     test-connection: true
     username: meet.your.santa.app@gmail.com
+    password: ${emailPassword}
   thymeleaf:
     cache: false
     enabled: true
