@@ -23,7 +23,7 @@ class DbPasswordRecoveryToken {
     @Column(nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "char")
     private String token;
 
     @Column(nullable = false)
