@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:9.4
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: santa
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: santa
+    ports:
+      - 5432:5432
+
+volumes:
+  db-data:

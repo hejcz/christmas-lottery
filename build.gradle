@@ -31,8 +31,6 @@ dependencies {
 
     testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
     testCompile "org.codehaus.groovy:groovy-all:2.4.12"
-    
-    runtimeOnly "org.springframework.boot:spring-boot-devtools"
 }
 
 task stage(dependsOn: ["build", "clean"])

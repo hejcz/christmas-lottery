@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+            required: true
+    test-connection: true
+    username: meet.your.santa.app@gmail.com
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html

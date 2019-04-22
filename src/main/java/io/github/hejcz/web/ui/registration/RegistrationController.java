@@ -30,8 +30,6 @@ class RegistrationController {
             return "registration";
         }
 
-        System.out.println(registrationForm);
-
         DtoUser dtoUser = new DtoUser();
         dtoUser.login(registrationForm.getEmail());
         dtoUser.name(registrationForm.getName());

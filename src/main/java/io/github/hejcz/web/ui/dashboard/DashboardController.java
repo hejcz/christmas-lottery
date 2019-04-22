@@ -85,7 +85,6 @@ class DashboardController {
 
     @PostMapping("/editWishes")
     public String editWishes(@ModelAttribute WishesForm wishesForm) {
-        System.out.println(wishesForm);
         lotteryFacade.updateWishes(loggedUser().id(), skipNullEntries(wishesForm));
         return "redirect:/dashboard";
     }
