@@ -10,7 +10,7 @@ import java.util.Collection;
 @Repository
 public interface ForbiddenMatchRepository extends CrudRepository<ForbiddenMatch, Long> {
 
-    @Query("SELECT m FROM ForbiddenMatch m where m.firstUserId in :ids OR m.secondUserId in :ids")
-    Collection<ForbiddenMatch> findByFirstOrSecondIdIn(@Param("ids") Collection<Integer> ids);
+    @Query("SELECT m FROM ForbiddenMatch m where m.firstUserId in :ids AND m.secondUserId in :ids")
+    Collection<ForbiddenMatch> findForbiddenMatchesBetweenUsersInLottery(@Param("ids") Collection<Integer> ids);
 
 }

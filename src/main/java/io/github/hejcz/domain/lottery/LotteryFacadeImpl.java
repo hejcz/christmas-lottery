@@ -53,7 +53,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
         AnnualMatches history =
             new AnnualMatches(matchRepository.findAll().stream().map(DbMatch::asMatch).collect(Collectors.toSet()));
         Collection<ForbiddenMatch> forbiddenMatches =
-            forbiddenMatchRepository.findByFirstOrSecondIdIn(group.membersIds());
+            forbiddenMatchRepository.findForbiddenMatchesBetweenUsersInLottery(group.membersIds());
         return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)), forbiddenMatches)
             .getMatches()
             .stream()
