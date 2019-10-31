@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/libs/Carol-0.1.jar
+web: java -Dserver.port=$PORT -jar build/libs/meet-your-santa-0.1.jar
