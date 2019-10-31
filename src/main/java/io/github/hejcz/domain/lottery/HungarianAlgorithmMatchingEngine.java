@@ -67,7 +67,9 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
             for (Match match : annualMatches.getMatches()) {
                 OrderedUser giver = userToOrderedUser.get(match.giver().getId());
                 OrderedUser recipient = userToOrderedUser.get(match.recipient().getId());
-                ++matrix[giver.ordinal()][recipient.ordinal()];
+                if (giver != null && recipient != null) {
+                    ++matrix[giver.ordinal()][recipient.ordinal()];
+                }
             }
         }
 
