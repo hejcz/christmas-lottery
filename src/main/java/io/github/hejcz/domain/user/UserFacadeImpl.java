@@ -20,7 +20,7 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public Collection<DtoUser> loadUsers() {
+    public Collection<DtoUser> findRegularUsers() {
         return userProvider.all();
     }
 
@@ -40,9 +40,9 @@ public class UserFacadeImpl implements UserFacade {
         return findByLogin(auth.getName()).orElseThrow(RuntimeException::new);
     }
 
-    private Optional<DtoUser> loggedUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return findByLogin(auth.getName());
+    @Override
+    public Integer loggedUserId() {
+        return loggedUserOrException().id();
     }
 
     @Override

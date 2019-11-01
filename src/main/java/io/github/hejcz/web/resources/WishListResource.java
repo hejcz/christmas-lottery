@@ -5,14 +5,13 @@ import io.github.hejcz.domain.lottery.LotteryFacade;
 import io.github.hejcz.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("user/wish-list")
+@RequestMapping("users/current/wish-list")
 @RequiredArgsConstructor
 class WishListResource {
 
@@ -22,7 +21,15 @@ class WishListResource {
     @GetMapping
     @Secured("USER")
     Collection<DtoWishRecipient> loggedUserWishList() {
-        return lotteryFacade.wishesOf(userFacade.loggedUserOrException().id());
+        return lotteryFacade.wishesOf(userFacade.loggedUserId());
+    }
+
+    @PutMapping
+    @Secured("USER")
+    void loggedUserWishList(@RequestBody Collection<Wish> wishList) {
+        lotteryFacade.updateWishes(
+            userFacade.loggedUserId(),
+            wishList.stream().map(Wish::toOldDto).collect(Collectors.toList()));
     }
 
 }

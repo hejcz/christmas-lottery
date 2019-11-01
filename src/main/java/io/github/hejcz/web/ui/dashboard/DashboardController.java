@@ -3,7 +3,6 @@ package io.github.hejcz.web.ui.dashboard;
 import io.github.hejcz.domain.lottery.DtoWishGiver;
 import io.github.hejcz.domain.lottery.DtoWishRecipient;
 import io.github.hejcz.domain.lottery.LotteryFacade;
-import io.github.hejcz.domain.user.DtoUser;
 import io.github.hejcz.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -43,11 +42,11 @@ class DashboardController {
 
     private void fillModelForAdmin(Model model) {
         model.addAttribute("canPerformLottery", canPerformLottery());
-        model.addAttribute("users", new LotteryForm(userFacade.loadUsers()));
+        model.addAttribute("users", new LotteryForm(userFacade.findRegularUsers()));
     }
 
     private void fillModelForUser(Model model) {
-        Integer loggedUserId = loggedUser().id();
+        Integer loggedUserId = loggedUserId();
         Optional<DtoWishGiver> recipientWishes = lotteryFacade.actualRecipientWishes(loggedUserId);
         model.addAttribute("myWishes", new WishesForm(lotteryFacade.wishesOf(loggedUserId)));
         model.addAttribute("hasRecipient", recipientWishes.isPresent());
@@ -85,12 +84,12 @@ class DashboardController {
 
     @PostMapping("/editWishes")
     public String editWishes(@ModelAttribute WishesForm wishesForm) {
-        lotteryFacade.updateWishes(loggedUser().id(), skipNullEntries(wishesForm));
+        lotteryFacade.updateWishes(loggedUserId(), skipNullEntries(wishesForm));
         return "redirect:/dashboard";
     }
 
-    private DtoUser loggedUser() {
-        return userFacade.loggedUserOrException();
+    private Integer loggedUserId() {
+        return userFacade.loggedUserId();
     }
 
     private List<DtoWishRecipient> skipNullEntries(@ModelAttribute WishesForm wishesForm) {

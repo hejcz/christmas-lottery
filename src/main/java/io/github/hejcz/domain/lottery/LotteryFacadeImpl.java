@@ -42,7 +42,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     private Set<User> users(Collection<Integer> participatingUsersIds) {
-        return userFacade.loadUsers()
+        return userFacade.findRegularUsers()
             .stream()
             .filter(dtoUser -> participatingUsersIds.contains(dtoUser.id()))
             .map(userDto -> User.with(userDto.id()))
