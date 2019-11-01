@@ -1,6 +1,7 @@
 package io.github.hejcz.web.resources;
 
-import io.github.hejcz.domain.user.DtoUser;
+import io.github.hejcz.domain.lottery.DtoWishRecipient;
+import io.github.hejcz.domain.lottery.LotteryFacade;
 import io.github.hejcz.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
@@ -9,30 +10,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("user/wish-list")
 @RequiredArgsConstructor
-class UserResource {
+class WishListResource {
 
+    private final LotteryFacade lotteryFacade;
     private final UserFacade userFacade;
 
-    @GetMapping("admin")
-    @Secured("ADMIN")
-    Collection<DtoUser> allUsers() {
-        return userFacade.loadUsers();
-    }
-
-    @GetMapping("user")
+    @GetMapping
     @Secured("USER")
-    DtoUser singleUser() {
-        return userFacade.loggedUserOrException();
-    }
-
-    @GetMapping("java12")
-    long java12() {
-        return Stream.ofNullable(null).count();
+    Collection<DtoWishRecipient> loggedUserWishList() {
+        return lotteryFacade.wishesOf(userFacade.loggedUserOrException().id());
     }
 
 }
