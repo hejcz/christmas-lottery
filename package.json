@@ -2,6 +2,9 @@
   "name": "demo-deploy",
   "version": "0.0.0",
   "license": "MIT",
+  "scripts": {
+    "build": "git clone https://github.com/hejcz/christmas-lottery-frontend && cd christmas-lottery-frontend && npm install --dev && ng build --prod && cd .. && mkdir -p src/main/resources/public/ && mv christmas-lottery-frontend/dist/santa2-frontend/* src/main/resources/public/"
+  },
   "dependencies": {
     "@angular/cli": "^1.4.9"
   },
