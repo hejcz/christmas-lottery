@@ -6,15 +6,10 @@ import io.github.hejcz.integration.email.OutgoingEmails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -88,7 +83,8 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     private DtoWishGiver createWishGiverDto(DbUser recipient) {
         return new DtoWishGiver(
-            recipient.formatName(),
+            recipient.getName(),
+            recipient.getSurname(),
             wishesOf(recipient.getId())
         );
     }
@@ -103,6 +99,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     @Override
+    @Transactional
     public void updateWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
         Collection<DbWish> wishesInDb = wishesRepository.findByRecipientId(recipientId);
         // hibernate could change wishesInDb elements after save
@@ -115,6 +112,28 @@ public class LotteryFacadeImpl implements LotteryFacade {
         if (anythingChanged(wishesInDbDtos, wishes)) {
             sendEmailToGiverIfAssigned(recipientId, wishesInDbDtos, wishes);
         }
+    }
+
+    @Override
+    @Transactional
+    public void lock(Integer wishId) {
+        modifyWishLock(wishId, true);
+    }
+
+    @Override
+    @Transactional
+    public void unlock(Integer wishId) {
+        modifyWishLock(wishId, false);
+    }
+
+    private void modifyWishLock(Integer wishId, boolean lock) {
+        Integer loggedUserId = userFacade.loggedUserId();
+        loadActualRecipient(loggedUserId)
+            .flatMap(recipient -> wishesRepository.findByRecipientIdAndId(recipient.getId(), wishId))
+            .ifPresent(wish -> {
+                wish.setLocked(lock);
+                wishesRepository.save(wish);
+            });
     }
 
     private void removeInvalidWishes(Collection<DbWish> wishesInDb, Set<Integer> ids) {
@@ -162,6 +181,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     @Override
+    @Transactional
     public void deleteActualLottery() {
         matchRepository.deleteByCreationDateBetween(startOfCurrentYear(), startOfNextYear());
     }

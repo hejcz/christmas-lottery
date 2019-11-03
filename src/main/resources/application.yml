@@ -26,8 +26,3 @@ spring:
     test-connection: true
     username: meet.your.santa.app@gmail.com
     password: ${email.password}
-  thymeleaf:
-    cache: false
-    enabled: true
-    prefix: classpath:/templates/
-    suffix: .html

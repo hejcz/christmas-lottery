@@ -21,10 +21,7 @@ public class DtoWishRecipient {
 
     private Integer power;
 
-    public boolean hasUrl() {
-        return url != null
-            && !"".equals(url);
-    }
+    private boolean locked;
 
     DbWish toDb(DbUser recipient) {
         return new DbWish(
@@ -33,6 +30,7 @@ public class DtoWishRecipient {
             text,
             url,
             power,
+            locked,
             recipient
         );
     }

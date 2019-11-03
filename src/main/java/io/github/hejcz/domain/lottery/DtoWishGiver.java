@@ -13,7 +13,9 @@ import java.util.Collection;
 @Accessors(fluent = true)
 public class DtoWishGiver {
 
-    private String recipient;
+    private String recipientName;
+
+    private String recipientSurname;
 
     private Collection<DtoWishRecipient> recipientWishes;
 

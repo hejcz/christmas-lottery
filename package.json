@@ -1,0 +1,12 @@
+{
+  "name": "demo-deploy",
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/cli": "^1.4.9"
+  },
+  "engines": {
+    "node": "10.16.3",
+    "npm": "6.9.0"
+  }
+}

@@ -11,8 +11,8 @@ INSERT INTO matches (id, creation_date, giver_id, recipient_id) VALUES
 (3, '2018-04-03', 3, 4),
 (4, '2018-04-03', 4, 1);
 
-INSERT INTO wishes (id, creation_date, text, power, recipient_id) VALUES
-(1, '2018-04-03', 'Płyn do naczyń', 2, 1),
-(2, '2018-04-03', 'Półka na książki', 3, 1);
+INSERT INTO wishes (id, creation_date, text, power, recipient_id, locked) VALUES
+(1, '2018-04-03', 'Płyn do naczyń', 2, 1, false),
+(2, '2018-04-03', 'Półka na książki', 3, 1, false);
 
 SELECT setval('hibernate_sequence', 50);

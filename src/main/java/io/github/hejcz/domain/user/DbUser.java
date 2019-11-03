@@ -47,8 +47,4 @@ public class DbUser {
         return new DtoUser(id, login, name, surname, password, email, systemRole);
     }
 
-    public String formatName() {
-        return String.format("%s %s", getName(), getSurname());
-    }
-
 }

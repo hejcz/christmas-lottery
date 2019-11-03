@@ -1,18 +1,16 @@
 package io.github.hejcz.web.resources;
 
-import io.github.hejcz.domain.lottery.DtoWishGiver;
 import io.github.hejcz.domain.lottery.LotteryFacade;
 import io.github.hejcz.domain.user.UserFacade;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("lottery")
+@RequestMapping("api/lottery")
 @RequiredArgsConstructor
 class LotteryResource {
 
@@ -34,32 +32,25 @@ class LotteryResource {
     }
 
     @GetMapping
-    @Secured({"USER"})
+    @Secured("USER")
     RecipientWishes recipientsWishes() {
         return lotteryFacade.actualRecipientWishes(userFacade.loggedUserId())
-            .map(this::getRecipientWishes)
-            .orElseGet(this::noWishes);
+            .map(DtoMapper::getRecipientWishes)
+            .orElseGet(DtoMapper::noWishes);
     }
 
-    private RecipientWishes getRecipientWishes(DtoWishGiver oldDto) {
-        RecipientWishes recipientWishes = new RecipientWishes();
-        recipientWishes.setRecipient(oldDto.recipient());
-        recipientWishes.setWishes(oldDto.recipientWishes().stream().map(oldWish -> {
-            Wish wish = new Wish();
-            wish.setId(oldWish.getId());
-            wish.setPower(oldWish.getPower());
-            wish.setText(oldWish.getText());
-            wish.setUrl(oldWish.getUrl());
-            return wish;
-        }).collect(Collectors.toList()));
-        return recipientWishes;
+    @PutMapping("wishes/{id}/lock")
+    @Secured("USER")
+    @ResponseStatus(HttpStatus.OK)
+    void lockWish(@PathVariable("id") Integer wishId) {
+        lotteryFacade.lock(wishId);
     }
 
-    private RecipientWishes noWishes() {
-        RecipientWishes recipientWishes = new RecipientWishes();
-        recipientWishes.setRecipient(null);
-        recipientWishes.setWishes(Collections.emptyList());
-        return recipientWishes;
+    @DeleteMapping("wishes/{id}/lock")
+    @Secured("USER")
+    @ResponseStatus(HttpStatus.OK)
+    void unlockWish(@PathVariable("id") Integer wishId) {
+        lotteryFacade.unlock(wishId);
     }
 
 }

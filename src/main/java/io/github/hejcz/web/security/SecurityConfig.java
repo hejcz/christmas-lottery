@@ -17,24 +17,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            .antMatchers("/api/**").hasAnyAuthority(registered())
-            .antMatchers("/dashboard").hasAnyAuthority(registered())
-            .antMatchers("/**").permitAll()
-            .and()
-            .formLogin()
-            .defaultSuccessUrl("/dashboard")
-            .loginPage("/login")
-            .and()
-            .httpBasic()
+        http.httpBasic()
             .and()
             .authenticationProvider(authenticationProvider())
             .csrf()
             .disable();
-    }
-
-    private String[] registered() {
-        return new String[]{"USER", "ADMIN"};
     }
 
     @Bean

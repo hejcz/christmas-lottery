@@ -40,11 +40,14 @@ class DbWish {
     @Column(nullable = false)
     private Integer power;
 
+    @Column(nullable = false)
+    private boolean locked;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private DbUser recipient;
 
     DtoWishRecipient toDto() {
-        return new DtoWishRecipient(id, text, url == null ? "" : url, power);
+        return new DtoWishRecipient(id, text, url == null ? "" : url, power, locked);
     }
 
 }
