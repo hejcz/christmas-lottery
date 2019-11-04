@@ -1,3 +1,5 @@
+santa:
+  url: https://meet-your-santa.herokuapp.com
 spring:
   jpa:
     open-in-view: false

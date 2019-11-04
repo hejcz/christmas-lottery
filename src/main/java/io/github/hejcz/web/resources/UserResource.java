@@ -41,7 +41,12 @@ class UserResource {
 
     @PutMapping("api/passwords/recovery")
     void initPasswordReset(@RequestBody String email) {
-        userSecurityFacade.requestPasswordRecovery(httpRequest.getRequestURL().toString(), email);
+        userSecurityFacade.requestPasswordRecovery(email);
+    }
+
+    @PutMapping("api/passwords")
+    void resetPassword(@RequestBody NewPassword newPassword) {
+        userSecurityFacade.changePassword(newPassword.getToken(), newPassword.getNewPassword());
     }
 
 }

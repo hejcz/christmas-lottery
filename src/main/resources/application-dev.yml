@@ -1,3 +1,5 @@
+santa:
+  url: http://localhost:9000
 spring:
   jpa:
     hibernate:

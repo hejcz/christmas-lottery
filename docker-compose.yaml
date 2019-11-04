@@ -1,16 +1,16 @@
-version: "3.7"
-
+version: '3'
 services:
-  db:
-    image: postgres:9.4
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  postgres:
+    image: postgres:11.5
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: santa
       POSTGRES_PASSWORD: example
-      POSTGRES_DB: santa
+      POSTGRES_DATABASE: santa
+  loadbalancer:
+    image: openresty/openresty
     ports:
-      - 5432:5432
-
-volumes:
-  db-data:
+      - "9000:80"
+    volumes:
+      - "./nginx-dev.conf:/etc/nginx/conf.d/default.conf"

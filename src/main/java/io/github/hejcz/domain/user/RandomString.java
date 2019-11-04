@@ -9,7 +9,7 @@ public class RandomString {
 
     private static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private static final String lower = upper.toLowerCase(Locale.ROOT);
+    private static final String lower = upper.toLowerCase();
 
     private static final String digits = "0123456789";
 
