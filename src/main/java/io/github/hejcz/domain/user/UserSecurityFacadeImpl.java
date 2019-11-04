@@ -29,6 +29,10 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
     @Override
     @Transactional
     public void requestPasswordRecovery(String email) {
+        userRepository.findByEmail(email).ifPresent(it -> sendRecoveryTokenToUser(email));
+    }
+
+    private void sendRecoveryTokenToUser(String email) {
         passwordRecoveryTokenRepository.deleteByEmail(email);
         DbPasswordRecoveryToken token = newToken(email);
         passwordRecoveryTokenRepository.save(token);
