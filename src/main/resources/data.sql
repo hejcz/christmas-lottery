@@ -1,9 +1,9 @@
 INSERT INTO users (id, login, name, surname, email, password, system_role) VALUES
-(1, 'jrubin1', 'Julian1', 'Rubin1', 'rubin94+01@gmail.com', '$2a$10$fhYt95MSX5Dyg7N/m/pg7e6V0oa.8QDq7LQ20ZSEnz1wQ5ii8stKC', 0),
-(2, 'jrubin2', 'Julian2', 'Rubin2', 'rubin94+02@gmail.com', '$2a$10$fhYt95MSX5Dyg7N/m/pg7e6V0oa.8QDq7LQ20ZSEnz1wQ5ii8stKC', 0),
-(3, 'jrubin3', 'Julian3', 'Rubin3', 'rubin94+03@gmail.com', '$2a$10$fhYt95MSX5Dyg7N/m/pg7e6V0oa.8QDq7LQ20ZSEnz1wQ5ii8stKC', 0),
-(4, 'jrubin4', 'Julian4', 'Rubin4', 'rubin94+04@gmail.com', '$2a$10$fhYt95MSX5Dyg7N/m/pg7e6V0oa.8QDq7LQ20ZSEnz1wQ5ii8stKC', 0),
-(5, 'jrubin5', 'Julian5', 'Rubin5', 'rubin94+05@gmail.com', '$2a$10$fhYt95MSX5Dyg7N/m/pg7e6V0oa.8QDq7LQ20ZSEnz1wQ5ii8stKC', 1);
+(1, 'jrubin1', 'Julian1', 'Rubin1', 'rubin94+01@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
+(2, 'jrubin2', 'Julian2', 'Rubin2', 'rubin94+02@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
+(3, 'jrubin3', 'Julian3', 'Rubin3', 'rubin94+03@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
+(4, 'jrubin4', 'Julian4', 'Rubin4', 'rubin94+04@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
+(5, 'jrubin5', 'Julian5', 'Rubin5', 'rubin94+05@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 1);
 
 INSERT INTO matches (id, creation_date, giver_id, recipient_id) VALUES
 (1, '2018-04-03', 1, 2),

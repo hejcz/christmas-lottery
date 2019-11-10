@@ -16,11 +16,35 @@ import java.util.stream.Stream;
 class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
     private static final int IMPOSSIBLE = Integer.MAX_VALUE;
+    private static final int ITERATIONS = 500;
 
     @Override
     public AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
-        OrderedUsers orderedUsers = orderUsers(group.toSet());
-        return performAssignment(matchesHistory, orderedUsers, forbiddenMatches);
+        AnnualMatches best = null;
+        for (int i = 0; i < ITERATIONS; i++) {
+            OrderedUsers orderedUsers = orderUsers(group.toSet());
+            AnnualMatches current = performAssignment(matchesHistory, orderedUsers, forbiddenMatches);
+            if (best == null) {
+                best = current;
+            } else {
+                long bestScore = score(best);
+                System.out.println(score(best));
+                if (bestScore == 0) {
+                    return best;
+                }
+                if (bestScore < score(current)) {
+                    best = current;
+                }
+            }
+        }
+        return best;
+    }
+
+    private long score(AnnualMatches best) {
+        Collection<Match> matches = best.getMatches();
+        return -matches.stream()
+            .filter(it -> matches.contains(new Match(it.recipient(), it.giver())))
+            .count();
     }
 
     /**

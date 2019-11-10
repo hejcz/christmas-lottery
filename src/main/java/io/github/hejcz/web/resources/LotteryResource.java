@@ -25,6 +25,12 @@ class LotteryResource {
         }
     }
 
+    @GetMapping("/admin")
+    @Secured("ADMIN")
+    boolean isLotteryPerformed() {
+        return !lotteryFacade.annualLotteryNotPerformedYet();
+    }
+
     @DeleteMapping
     @Secured("ADMIN")
     void resetLottery() {

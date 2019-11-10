@@ -42,22 +42,23 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
     @Override
     @Transactional
     public void changePassword(String token, String newPassword) {
-        recoveryEmail(token).ifPresent(email -> newPassword(email, newPassword));
+        newPassword(recoveryEmail(token), newPassword);
     }
 
-    private Optional<String> recoveryEmail(String token) {
-        Optional<DbPasswordRecoveryToken> existingToken =
-            passwordRecoveryTokenRepository.findByToken(token);
-        existingToken.ifPresent(passwordRecoveryTokenRepository::delete);
-        return existingToken.map(DbPasswordRecoveryToken::getEmail);
+    private String recoveryEmail(String token) {
+        DbPasswordRecoveryToken existingToken =
+            passwordRecoveryTokenRepository.findByToken(token)
+            .orElseThrow(() -> new RuntimeException("Token does not exist"));
+        passwordRecoveryTokenRepository.delete(existingToken);
+        return existingToken.getEmail();
     }
 
     private void newPassword(String email, String newPassword) {
-        userRepository.findByEmail(email)
-            .ifPresent(user -> {
-                user.setPassword(passwordEncoder.encode(newPassword));
-                userRepository.save(user);
-            });
+        System.out.println(newPassword);
+        DbUser user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("No user with such e-mail"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     private DbPasswordRecoveryToken newToken(String email) {
