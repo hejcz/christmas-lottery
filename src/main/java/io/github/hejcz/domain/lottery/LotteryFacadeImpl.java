@@ -29,10 +29,12 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private final ForbiddenMatchRepository forbiddenMatchRepository;
 
     @Override
+    @Transactional
     public void performLottery(Collection<Integer> participatingUsersIds) {
         Group group = new Group(users(participatingUsersIds));
         if (group.hasMultipleMembers()) {
             matchRepository.saveAll(lotteryResults(group));
+            wishesRepository.unlockAllWishes();
         }
     }
 
