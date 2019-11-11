@@ -34,7 +34,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
         Group group = new Group(users(participatingUsersIds));
         if (group.hasMultipleMembers()) {
             matchRepository.saveAll(lotteryResults(group));
-            wishesRepository.unlockAllWishes();
+            wishesRepository.deleteAll();
         }
     }
 
