@@ -74,30 +74,30 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     @Override
     public Optional<DtoWishGiver> actualRecipientWishes(Integer giverId) {
-        return loadActualRecipient(giverId)
+        return matchRepository.currentMatch(giverId)
             .map(this::createWishGiverDto);
     }
 
-    private Optional<DbUser> loadActualRecipient(Integer giverId) {
-        return matchRepository.currentMatch(giverId)
-            .map(DbMatch::getRecipient);
-    }
-
-    private DtoWishGiver createWishGiverDto(DbUser recipient) {
+    private DtoWishGiver createWishGiverDto(DbMatch match) {
         return new DtoWishGiver(
-            recipient.getName(),
-            recipient.getSurname(),
-            wishesOf(recipient.getId())
+            match.getRecipient().getName(),
+            match.getRecipient().getSurname(),
+            match.isLocked(),
+            wishesOf(match.getRecipient().getId()).getWishes()
         );
     }
 
     @Override
-    public Collection<DtoWishRecipient> wishesOf(Integer recipientId) {
-        return wishesRepository.findByRecipientId(recipientId)
-            .stream()
-            .sorted(Comparator.comparing(DbWish::getCreationDate))
-            .map(DbWish::toDto)
-            .collect(Collectors.toList());
+    public WishList wishesOf(Integer recipientId) {
+        boolean isLocked = currentMatch(recipientId).map(DbMatch::isLocked).orElse(false);
+        return new WishList(
+            isLocked,
+            wishesRepository.findByRecipientId(recipientId)
+                .stream()
+                .sorted(Comparator.comparing(DbWish::getCreationDate))
+                .map(DbWish::toDto)
+                .collect(Collectors.toList())
+        );
     }
 
     @Override
@@ -114,28 +114,6 @@ public class LotteryFacadeImpl implements LotteryFacade {
         if (anythingChanged(wishesInDbDtos, wishes)) {
             sendEmailToGiverIfAssigned(recipientId, wishesInDbDtos, wishes);
         }
-    }
-
-    @Override
-    @Transactional
-    public void lock(Integer wishId) {
-        modifyWishLock(wishId, true);
-    }
-
-    @Override
-    @Transactional
-    public void unlock(Integer wishId) {
-        modifyWishLock(wishId, false);
-    }
-
-    private void modifyWishLock(Integer wishId, boolean lock) {
-        Integer loggedUserId = userFacade.loggedUserId();
-        loadActualRecipient(loggedUserId)
-            .flatMap(recipient -> wishesRepository.findByRecipientIdAndId(recipient.getId(), wishId))
-            .ifPresent(wish -> {
-                wish.setLocked(lock);
-                wishesRepository.save(wish);
-            });
     }
 
     private void removeInvalidWishes(Collection<DbWish> wishesInDb, Set<Integer> ids) {
@@ -176,16 +154,34 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     private Optional<String> findGiverEmail(Integer recipientId) {
-        return matchRepository.findByRecipientIdAndCreationDateIsBetween(
-            recipientId, startOfCurrentYear(), startOfNextYear())
+        return currentMatch(recipientId)
             .map(DbMatch::getGiver)
             .map(DbUser::getEmail);
+    }
+
+    private Optional<DbMatch> currentMatch(Integer recipientId) {
+        return matchRepository.findByRecipientIdAndCreationDateIsBetween(
+            recipientId, startOfCurrentYear(), startOfNextYear());
     }
 
     @Override
     @Transactional
     public void deleteActualLottery() {
         matchRepository.deleteByCreationDateBetween(startOfCurrentYear(), startOfNextYear());
+    }
+
+    @Override
+    @Transactional
+    public void lockWishes() {
+        matchRepository.currentMatch(userFacade.loggedUserId())
+            .ifPresent(match -> match.setLocked(true));
+    }
+
+    @Override
+    @Transactional
+    public void unlockWishes() {
+        matchRepository.currentMatch(userFacade.loggedUserId())
+            .ifPresent(match -> match.setLocked(false));
     }
 
     private DbMatch matchToDbMatch(Match match) {

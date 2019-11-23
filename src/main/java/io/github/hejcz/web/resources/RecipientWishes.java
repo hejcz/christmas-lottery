@@ -12,5 +12,6 @@ import java.util.Collection;
 public class RecipientWishes {
     private String firstName;
     private String lastName;
+    private boolean locked;
     private Collection<Wish> wishes;
 }

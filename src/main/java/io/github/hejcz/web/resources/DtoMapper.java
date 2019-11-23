@@ -13,6 +13,7 @@ public class DtoMapper {
         RecipientWishes recipientWishes = new RecipientWishes();
         recipientWishes.setFirstName(oldDto.recipientName());
         recipientWishes.setLastName(oldDto.recipientSurname());
+        recipientWishes.setLocked(oldDto.locked());
         recipientWishes.setWishes(mapWishes(oldDto.recipientWishes()));
         return recipientWishes;
     }
@@ -24,7 +25,6 @@ public class DtoMapper {
             wish.setPower(oldWish.getPower());
             wish.setTitle(oldWish.getText());
             wish.setUrl(oldWish.getUrl());
-            wish.setLocked(oldWish.isLocked());
             return wish;
         }).collect(Collectors.toList());
     }

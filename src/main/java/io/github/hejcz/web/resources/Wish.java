@@ -13,9 +13,8 @@ public class Wish {
     private String title;
     private String url;
     private Integer power;
-    private Boolean locked;
 
     public DtoWishRecipient toOldDto() {
-        return new DtoWishRecipient(id, title, url, power, locked == null ? false : locked);
+        return new DtoWishRecipient(id, title, url, power);
     }
 }

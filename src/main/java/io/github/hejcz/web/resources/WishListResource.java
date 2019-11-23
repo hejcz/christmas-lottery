@@ -19,8 +19,9 @@ class WishListResource {
 
     @GetMapping
     @Secured("USER")
-    Collection<Wish> loggedUserWishList() {
-        return DtoMapper.mapWishes(lotteryFacade.wishesOf(userFacade.loggedUserId()));
+    WishList loggedUserWishList() {
+        io.github.hejcz.domain.lottery.WishList wishList = lotteryFacade.wishesOf(userFacade.loggedUserId());
+        return new WishList(DtoMapper.mapWishes(wishList.getWishes()), wishList.isLocked());
     }
 
     @PutMapping

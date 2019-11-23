@@ -11,14 +11,13 @@ public interface LotteryFacade {
 
     Optional<DtoWishGiver> actualRecipientWishes(Integer giverId);
 
-    Collection<DtoWishRecipient> wishesOf(Integer recipientId);
+    WishList wishesOf(Integer recipientId);
 
     void updateWishes(Integer recipientId, Collection<DtoWishRecipient> wishes);
 
-    void lock(Integer wishId);
-
-    void unlock(Integer wishId);
-
     void deleteActualLottery();
 
+    void lockWishes();
+
+    void unlockWishes();
 }

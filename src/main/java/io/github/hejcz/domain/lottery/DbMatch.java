@@ -36,9 +36,13 @@ class DbMatch {
     @ManyToOne
     private DbUser recipient;
 
+    @Column(nullable = false)
+    private boolean locked;
+
     DbMatch(DbUser giver, DbUser recipient) {
         this.giver = giver;
         this.recipient = recipient;
+        this.locked = false;
     }
 
     Match asMatch() {

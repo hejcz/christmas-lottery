@@ -45,18 +45,18 @@ class LotteryResource {
             .orElseGet(DtoMapper::noWishes);
     }
 
-    @PutMapping("wishes/{id}/lock")
+    @PutMapping("wishes/lock")
     @Secured("USER")
     @ResponseStatus(HttpStatus.OK)
-    void lockWish(@PathVariable("id") Integer wishId) {
-        lotteryFacade.lock(wishId);
+    void lockWishes() {
+        lotteryFacade.lockWishes();
     }
 
-    @DeleteMapping("wishes/{id}/lock")
+    @DeleteMapping("wishes/lock")
     @Secured("USER")
     @ResponseStatus(HttpStatus.OK)
-    void unlockWish(@PathVariable("id") Integer wishId) {
-        lotteryFacade.unlock(wishId);
+    void unlockWishes() {
+        lotteryFacade.unlockWishes();
     }
 
 }

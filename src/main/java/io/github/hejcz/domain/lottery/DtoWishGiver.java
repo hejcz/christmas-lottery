@@ -17,6 +17,8 @@ public class DtoWishGiver {
 
     private String recipientSurname;
 
+    private boolean locked;
+
     private Collection<DtoWishRecipient> recipientWishes;
 
 }

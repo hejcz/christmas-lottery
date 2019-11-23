@@ -21,8 +21,6 @@ public class DtoWishRecipient {
 
     private Integer power;
 
-    private boolean locked;
-
     DbWish toDb(DbUser recipient) {
         return new DbWish(
             id,
@@ -30,7 +28,6 @@ public class DtoWishRecipient {
             text,
             url,
             power,
-            locked,
             recipient
         );
     }
