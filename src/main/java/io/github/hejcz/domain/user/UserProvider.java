@@ -25,7 +25,7 @@ class UserProvider {
     }
 
     Optional<DtoUser> byLogin(String username) {
-        return userRepository.findByLogin(username)
+        return userRepository.findByLoginIgnoreCase(username)
             .map(DbUser::toDto);
     }
 

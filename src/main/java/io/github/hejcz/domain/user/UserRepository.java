@@ -11,9 +11,9 @@ interface UserRepository extends CrudRepository<DbUser, Integer> {
 
     Collection<DbUser> findAll();
 
-    Optional<DbUser> findByLogin(String username);
+    Optional<DbUser> findByLoginIgnoreCase(String username);
 
-    Optional<DbUser> findByEmail(String email);
+    Optional<DbUser> findByEmailIgnoreCase(String email);
 
     Collection<DbUser> findBySystemRole(SystemRole systemRole);
 

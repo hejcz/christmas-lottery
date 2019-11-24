@@ -7,10 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
 class UserSecurityFacadeImpl implements UserSecurityFacade {
@@ -29,7 +25,7 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
     @Override
     @Transactional
     public void requestPasswordRecovery(String email) {
-        userRepository.findByEmail(email).ifPresent(it -> sendRecoveryTokenToUser(email));
+        userRepository.findByEmailIgnoreCase(email).ifPresent(it -> sendRecoveryTokenToUser(email));
     }
 
     private void sendRecoveryTokenToUser(String email) {
@@ -55,7 +51,7 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
 
     private void newPassword(String email, String newPassword) {
         System.out.println(newPassword);
-        DbUser user = userRepository.findByEmail(email)
+        DbUser user = userRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new RuntimeException("No user with such e-mail"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
