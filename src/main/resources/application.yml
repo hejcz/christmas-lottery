@@ -25,6 +25,6 @@ spring:
           starttls:
             enable: true
             required: true
-    test-connection: true
+    test-connection: false
     username: meet.your.santa.app@gmail.com
     password: ${email.password}

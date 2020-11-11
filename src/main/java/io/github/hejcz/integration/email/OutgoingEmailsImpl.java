@@ -19,22 +19,22 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 class OutgoingEmailsImpl implements OutgoingEmails {
 
-    private final JavaMailSender javaMailSender;
+    private final MailSenderFactory javaMailSender;
 
     private final Mustache wishesChanged;
     private final Mustache resetPassword;
 
     @Autowired
-    public OutgoingEmailsImpl(JavaMailSender javaMailSender) {
+    public OutgoingEmailsImpl(MailSenderFactory mailSenderFactory) {
         MustacheFactory mf = new DefaultMustacheFactory();
         this.wishesChanged = mf.compile("wishes_changed_email.pl.mustache");
         this.resetPassword = mf.compile("password_reset.pl.mustache");
-        this.javaMailSender = javaMailSender;
+        this.javaMailSender = mailSenderFactory;
     }
 
     @Override
     public void sendWishesUpdate(String giverEmail, WishListChange wishListChange) {
-        javaMailSender.send(mimeMessage -> {
+        javaMailSender.create().send(mimeMessage -> {
             MimeMessageHelper message = createMessage(mimeMessage);
             fillSender(message);
             message.setTo(giverEmail);
@@ -45,7 +45,7 @@ class OutgoingEmailsImpl implements OutgoingEmails {
 
     @Override
     public void sendPasswordRecovery(String giverEmail, String passwordResetUrl) {
-        javaMailSender.send(mimeMessage -> {
+        javaMailSender.create().send(mimeMessage -> {
             MimeMessageHelper message = createMessage(mimeMessage);
             fillSender(message);
             message.setTo(giverEmail);
