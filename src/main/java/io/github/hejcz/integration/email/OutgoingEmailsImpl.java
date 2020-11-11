@@ -6,6 +6,8 @@ import com.github.mustachejava.MustacheFactory;
 import io.github.hejcz.domain.lottery.WishListChange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,22 +21,23 @@ import java.io.UnsupportedEncodingException;
 @RequiredArgsConstructor
 class OutgoingEmailsImpl implements OutgoingEmails {
 
-    private final MailSenderFactory javaMailSender;
-
     private final Mustache wishesChanged;
     private final Mustache resetPassword;
+    private final JavaMailSender javaMailSender;
+    private final MailProperties mailProperties;
 
     @Autowired
-    public OutgoingEmailsImpl(MailSenderFactory mailSenderFactory) {
+    public OutgoingEmailsImpl(MailProperties mailProperties, JavaMailSender javaMailSender) {
+        this.mailProperties = mailProperties;
         MustacheFactory mf = new DefaultMustacheFactory();
         this.wishesChanged = mf.compile("wishes_changed_email.pl.mustache");
         this.resetPassword = mf.compile("password_reset.pl.mustache");
-        this.javaMailSender = mailSenderFactory;
+        this.javaMailSender = javaMailSender;
     }
 
     @Override
     public void sendWishesUpdate(String giverEmail, WishListChange wishListChange) {
-        javaMailSender.create().send(mimeMessage -> {
+        javaMailSender.send(mimeMessage -> {
             MimeMessageHelper message = createMessage(mimeMessage);
             fillSender(message);
             message.setTo(giverEmail);
@@ -45,7 +48,7 @@ class OutgoingEmailsImpl implements OutgoingEmails {
 
     @Override
     public void sendPasswordRecovery(String giverEmail, String passwordResetUrl) {
-        javaMailSender.create().send(mimeMessage -> {
+        javaMailSender.send(mimeMessage -> {
             MimeMessageHelper message = createMessage(mimeMessage);
             fillSender(message);
             message.setTo(giverEmail);
@@ -59,7 +62,7 @@ class OutgoingEmailsImpl implements OutgoingEmails {
     }
 
     private void fillSender(MimeMessageHelper message) throws MessagingException, UnsupportedEncodingException {
-        message.setFrom("meet.your.santa.app@gmail.com", "Loteria świąteczna");
+        message.setFrom(mailProperties.getUsername(), "Loteria świąteczna");
     }
 
     private String renderMustache(Mustache mustache, Object context) {
