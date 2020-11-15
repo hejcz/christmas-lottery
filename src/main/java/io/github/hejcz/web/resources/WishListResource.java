@@ -29,7 +29,7 @@ class WishListResource {
     void updateLoggedUserWishList(@RequestBody Collection<Wish> wishList) {
         lotteryFacade.updateWishes(
             userFacade.loggedUserId(),
-            wishList.stream().map(Wish::toOldDto).collect(Collectors.toList()));
+            wishList.stream().map(Wish::toOldDto).collect(Collectors.toSet()));
     }
 
 }

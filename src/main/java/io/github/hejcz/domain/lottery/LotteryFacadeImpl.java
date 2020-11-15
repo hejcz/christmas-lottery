@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 @Component
 @RequiredArgsConstructor
 public class LotteryFacadeImpl implements LotteryFacade {
@@ -102,26 +105,18 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     @Override
     @Transactional
-    public void updateWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
+    public void updateWishes(Integer recipientId, Set<DtoWishRecipient> currentWishes) {
         Collection<DbWish> wishesInDb = wishesRepository.findByRecipientId(recipientId);
         // hibernate could change wishesInDb elements after save
-        List<DtoWishRecipient> wishesInDbDtos = wishesInDb.stream().map(DbWish::toDto).collect(Collectors.toList());
-        Set<Integer> ids = wishes.stream().map(DtoWishRecipient::getId).collect(Collectors.toSet());
-        removeInvalidWishes(wishesInDb, ids);
-        if (!wishes.isEmpty()) {
-            saveWishes(recipientId, wishes);
+        Set<DtoWishRecipient> previousWishes = wishesInDb.stream().map(DbWish::toDto).collect(Collectors.toSet());
+        final boolean nothingChanged = currentWishes.size() == previousWishes.size()
+                && Sets.difference(currentWishes, previousWishes).isEmpty();
+        if (nothingChanged) {
+            return;
         }
-        if (anythingChanged(wishesInDbDtos, wishes)) {
-            sendEmailToGiverIfAssigned(recipientId, wishesInDbDtos, wishes);
-        }
-    }
-
-    private void removeInvalidWishes(Collection<DbWish> wishesInDb, Set<Integer> ids) {
-        wishesRepository.deleteAll(
-            wishesInDb.stream()
-                .filter(wish -> !ids.contains(wish.getId()))
-                .collect(Collectors.toSet())
-        );
+        wishesRepository.deleteAll(wishesInDb);
+        saveWishes(recipientId, currentWishes);
+        sendEmailToGiverIfAssigned(recipientId, Lists.newLinkedList(previousWishes), currentWishes);
     }
 
     private void saveWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
@@ -132,11 +127,6 @@ public class LotteryFacadeImpl implements LotteryFacade {
                 .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient))
                 .collect(Collectors.toList())
         );
-    }
-
-    private boolean anythingChanged(Collection<DtoWishRecipient> oldWishes, Collection<DtoWishRecipient> newWishes) {
-        return oldWishes.size() != newWishes.size()
-            || oldWishes.stream().anyMatch(it -> !newWishes.contains(it));
     }
 
     private void sendEmailToGiverIfAssigned(Integer recipientId,

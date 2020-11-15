@@ -3,6 +3,7 @@ package io.github.hejcz.domain.lottery;
 import io.github.hejcz.domain.user.DbUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "id")
 public class DtoWishRecipient {
 
     private Integer id;

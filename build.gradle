@@ -8,7 +8,7 @@ apply plugin: "io.spring.dependency-management"
 group "io.github.hejcz"
 version "0.1"
 
-sourceCompatibility = 12
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -26,6 +26,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-mail"
     implementation "org.postgresql:postgresql:42.2.5"
+    implementation 'com.google.guava:guava:30.0-jre'
 }
 
 task stage(dependsOn: ["build", "clean"])

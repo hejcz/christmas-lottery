@@ -50,7 +50,6 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
     }
 
     private void newPassword(String email, String newPassword) {
-        System.out.println(newPassword);
         DbUser user = userRepository.findByEmailIgnoreCase(email)
             .orElseThrow(() -> new RuntimeException("No user with such e-mail"));
         user.setPassword(passwordEncoder.encode(newPassword));

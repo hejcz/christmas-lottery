@@ -28,7 +28,6 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
                 best = current;
             } else {
                 long bestScore = score(best);
-                System.out.println(score(best));
                 if (bestScore == 0) {
                     return best;
                 }
