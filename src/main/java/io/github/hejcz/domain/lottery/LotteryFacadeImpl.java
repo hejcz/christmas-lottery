@@ -97,7 +97,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
             isLocked,
             wishesRepository.findByRecipientId(recipientId)
                 .stream()
-                .sorted(Comparator.comparing(DbWish::getCreationDate))
+                .sorted(Comparator.comparing(DbWish::getText))
                 .map(DbWish::toDto)
                 .collect(Collectors.toList())
         );
