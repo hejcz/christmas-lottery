@@ -27,6 +27,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation "org.postgresql:postgresql:42.3.1"
     implementation 'com.google.guava:guava:31.0.1-jre'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.testcontainers:postgresql:1.16.2"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.2"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task stage(dependsOn: ["build", "clean"])

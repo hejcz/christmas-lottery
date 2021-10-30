@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-interface UserRepository extends CrudRepository<DbUser, Integer> {
+public interface UserRepository extends CrudRepository<DbUser, Integer> {
 
     Collection<DbUser> findAll();
 

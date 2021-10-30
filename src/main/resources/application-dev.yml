@@ -11,3 +11,4 @@ spring:
     username: santa
     password: example
     initialization-mode: always
+    driver-class-name: org.postgresql.Driver
