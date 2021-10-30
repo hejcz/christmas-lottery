@@ -1,9 +1,6 @@
 package io.github.hejcz.domain.lottery;
 
 import io.github.hejcz.domain.user.DbUser;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -15,11 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-@Data
 @Entity
 @Table(name = "matches")
-@NoArgsConstructor
-@AllArgsConstructor
 class DbMatch {
 
     @Id
@@ -39,14 +33,42 @@ class DbMatch {
     @Column(nullable = false)
     private boolean locked;
 
-    DbMatch(DbUser giver, DbUser recipient) {
+    public DbMatch() {
+    }
+
+    public DbMatch(Integer id, Timestamp creationDate, DbUser giver, DbUser recipient, boolean locked) {
+        this.id = id;
+        this.creationDate = creationDate;
         this.giver = giver;
         this.recipient = recipient;
-        this.locked = false;
+        this.locked = locked;
     }
 
     Match asMatch() {
         return new Match(new UserId(giver.getId()), new UserId(recipient.getId()));
     }
 
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Timestamp getCreationDate() {
+        return creationDate;
+    }
+
+    public DbUser getGiver() {
+        return giver;
+    }
+
+    public DbUser getRecipient() {
+        return recipient;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
 }

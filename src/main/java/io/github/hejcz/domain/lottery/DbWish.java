@@ -1,9 +1,6 @@
 package io.github.hejcz.domain.lottery;
 
 import io.github.hejcz.domain.user.DbUser;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -16,11 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-@Data
 @Entity
 @Table(name = "wishes")
-@NoArgsConstructor
-@AllArgsConstructor
 class DbWish {
 
     @Id
@@ -47,4 +41,19 @@ class DbWish {
         return new DtoWishRecipient(id, text, url == null ? "" : url, power);
     }
 
+    public DbWish() {
+    }
+
+    public DbWish(Integer id, Timestamp creationDate, String text, String url, Integer power, DbUser recipient) {
+        this.id = id;
+        this.creationDate = creationDate;
+        this.text = text;
+        this.url = url;
+        this.power = power;
+        this.recipient = recipient;
+    }
+
+    public String getText() {
+        return text;
+    }
 }

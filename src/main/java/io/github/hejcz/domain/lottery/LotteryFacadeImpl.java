@@ -185,8 +185,10 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     private DbMatch matchToDbMatch(Match match) {
         return new DbMatch(
+                null, null,
                 userFacade.findById(match.giver().id()),
-                userFacade.findById(match.recipient().id())
+                userFacade.findById(match.recipient().id()),
+                false
         );
     }
 

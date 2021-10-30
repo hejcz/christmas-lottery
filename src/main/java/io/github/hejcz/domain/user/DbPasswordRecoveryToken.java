@@ -1,9 +1,5 @@
 package io.github.hejcz.domain.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,11 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "tokens")
-@NoArgsConstructor
-@AllArgsConstructor
 class DbPasswordRecoveryToken {
 
     @Id
@@ -29,4 +22,20 @@ class DbPasswordRecoveryToken {
     @Column(nullable = false)
     private String email;
 
+    public DbPasswordRecoveryToken() {
+    }
+
+    public DbPasswordRecoveryToken(Integer id, String token, String email) {
+        this.id = id;
+        this.token = token;
+        this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }

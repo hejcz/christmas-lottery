@@ -102,8 +102,8 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         }
 
         forbiddenMatches.forEach(forbiddenMatch -> {
-            Integer first = userToOrderedUser.get(forbiddenMatch.firstUserId).ordinal();
-            Integer second = userToOrderedUser.get(forbiddenMatch.secondUserId).ordinal();
+            Integer first = userToOrderedUser.get(forbiddenMatch.getFirstUserId()).ordinal();
+            Integer second = userToOrderedUser.get(forbiddenMatch.getSecondUserId()).ordinal();
             matrix[first][second] = IMPOSSIBLE;
             matrix[second][first] = IMPOSSIBLE;
         });

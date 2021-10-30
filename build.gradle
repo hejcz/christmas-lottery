@@ -14,12 +14,7 @@ repositories {
     mavenCentral()
 }
 
-configurations {
-    compileOnly.extendsFrom annotationProcessor
-}
-
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
     implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
