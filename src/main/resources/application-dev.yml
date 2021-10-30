@@ -2,6 +2,8 @@ santa:
   url: http://localhost:9000
 spring:
   jpa:
+    generate-ddl: true
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
   datasource:

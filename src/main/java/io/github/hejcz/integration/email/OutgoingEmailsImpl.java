@@ -4,10 +4,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import io.github.hejcz.domain.lottery.WishListChange;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 @Service
-@RequiredArgsConstructor
 class OutgoingEmailsImpl implements OutgoingEmails {
 
     private final Mustache wishesChanged;
@@ -26,7 +22,6 @@ class OutgoingEmailsImpl implements OutgoingEmails {
     private final JavaMailSender javaMailSender;
     private final MailProperties mailProperties;
 
-    @Autowired
     public OutgoingEmailsImpl(MailProperties mailProperties, JavaMailSender javaMailSender) {
         this.mailProperties = mailProperties;
         MustacheFactory mf = new DefaultMustacheFactory();

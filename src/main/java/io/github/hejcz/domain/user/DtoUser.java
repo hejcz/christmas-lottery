@@ -1,48 +1,18 @@
 package io.github.hejcz.domain.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Accessors(fluent = true)
-public class DtoUser {
-
-    private Integer id;
-
-    private String login;
-
-    private String name;
-
-    private String surname;
-
-    private String password;
-
-    private String email;
-
-    private SystemRole systemRole;
+public record DtoUser(Integer id, String login, String name, String surname, String password, String email,
+                      SystemRole systemRole) {
 
     public boolean isAdmin() {
         return systemRole == SystemRole.ADMIN;
     }
 
     DbUser toDb() {
-        return new DbUser(
-            id,
-            login,
-            name,
-            surname,
-            email,
-            password,
-            systemRole
-        );
+        return new DbUser(id, login, name, surname, email, password, systemRole);
     }
 
-    public String formatName() {
-        return String.format("%s %s", name, surname);
+    public DtoUser withPassword(String newPassword) {
+        return new DtoUser(id, login, name, surname, newPassword, email, systemRole);
     }
 
 }

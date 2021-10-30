@@ -1,7 +1,5 @@
 package io.github.hejcz.domain.lottery;
 
-import lombok.Value;
-
 import java.util.Map;
 
 /**
@@ -9,11 +7,6 @@ import java.util.Map;
  * należy przypisać jedną z kolejnych liczb naturalnych rozpoczynając od 0.
  * Klasa reprezentuje to mapowanie.
  */
-@Value
-class OrderedUsers {
-
-    Map<Integer, User> ordinalToUser;
-
-    Map<Integer, OrderedUser> userToOrderedUser;
-
+record OrderedUsers(Map<Integer, UserId> ordinalToUser,
+                    Map<Integer, OrderedUser> userToOrderedUser) {
 }

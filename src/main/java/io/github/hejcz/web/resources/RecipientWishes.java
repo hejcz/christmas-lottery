@@ -1,17 +1,13 @@
 package io.github.hejcz.web.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
 
-@Data
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RecipientWishes {
-    private String firstName;
-    private String lastName;
-    private boolean locked;
-    private Collection<Wish> wishes;
+public record RecipientWishes(@JsonProperty("firstName") String firstName,
+                              @JsonProperty("lastName") String lastName,
+                              @JsonProperty("locked") boolean locked,
+                              @JsonProperty("wishes") Collection<Wish> wishes) {
 }

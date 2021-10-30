@@ -1,6 +1,5 @@
 package io.github.hejcz.web.security;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,22 +17,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserFacadeDetailsService userFacadeDetailsService;
 
+    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService) {
+        this.userFacadeDetailsService = userFacadeDetailsService;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-            .and()
-            .httpBasic()
-            .authenticationEntryPoint(new NoWwwAuthenticateEntryPoint())
-            .and()
-            .authenticationProvider(authenticationProvider())
-            .csrf()
-            .disable();
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .and()
+                .httpBasic()
+                .authenticationEntryPoint(new NoWwwAuthenticateEntryPoint())
+                .and()
+                .authenticationProvider(authenticationProvider())
+                .csrf()
+                .disable();
     }
 
     @Bean
