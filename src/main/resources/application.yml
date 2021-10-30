@@ -28,3 +28,5 @@ spring:
     test-connection: true
     username: meet_your_santa@yahoo.com
     password: ${email.password}
+server:
+  forward-headers-strategy: native

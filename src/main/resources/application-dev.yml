@@ -12,3 +12,5 @@ spring:
     password: example
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
+server:
+  forward-headers-strategy: native
