@@ -12,6 +12,8 @@ public record DtoWishRecipient(Integer id, String text, String url, Integer powe
         return new DbWish(id, Timestamp.valueOf(LocalDateTime.now()), text, url, power, recipient);
     }
 
+    // TODO we use Sets.difference so we don't want to rely on id (why?) but it's kinda hacky.
+    // we can wrap this object in another one.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

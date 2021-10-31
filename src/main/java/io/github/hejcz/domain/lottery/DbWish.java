@@ -38,7 +38,7 @@ class DbWish {
     private DbUser recipient;
 
     DtoWishRecipient toDto() {
-        return new DtoWishRecipient(id, text, url == null ? "" : url, power);
+        return new DtoWishRecipient(id, text, url, power);
     }
 
     public DbWish() {

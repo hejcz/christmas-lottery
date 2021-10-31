@@ -3,11 +3,14 @@ package io.github.hejcz;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.hejcz.domain.lottery.DtoWishRecipient;
+import io.github.hejcz.domain.lottery.WishListChange;
 import io.github.hejcz.domain.registration.RegistrationFacade;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -58,7 +61,7 @@ public class AppIT {
     private RegistrationFacade registrationFacade;
 
     @Test
-    void generatesMatchesOnceLotteryStarts() throws JsonProcessingException {
+    void simpleLotteryFlow() throws JsonProcessingException {
         final RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange("http://localhost:" + port + "/api/lottery", HttpMethod.DELETE,
                 new HttpEntity<>(adminHeaders()), Void.class);
@@ -80,13 +83,86 @@ public class AppIT {
                 new HttpEntity<>(headers("User1", "user1")), String.class);
         final JsonNode checkBuyingOfUser1Json = OBJECT_MAPPER.readTree(checkBuyingOfUser1.getBody());
         Assertions.assertThat(checkBuyingOfUser1.getStatusCodeValue()).isEqualTo(200);
-        Assertions.assertThat(checkBuyingOfUser1Json.get("firstName").textValue()).isNotEqualTo("Name1");
-        Assertions.assertThat(checkBuyingOfUser1Json.get("firstName").textValue()).startsWith("Name");
+        final String firstName = checkBuyingOfUser1Json.get("firstName").textValue();
+        Assertions.assertThat(firstName).isNotEqualTo("Name1");
+        Assertions.assertThat(firstName).startsWith("Name");
         Assertions.assertThat(checkBuyingOfUser1Json.get("lastName").textValue()).isNotEqualTo("Surname1");
         Assertions.assertThat(checkBuyingOfUser1Json.get("lastName").textValue()).startsWith("Surname");
         Assertions.assertThat(checkBuyingOfUser1Json.get("locked").booleanValue()).isFalse();
         Assertions.assertThat(checkBuyingOfUser1Json.get("wishes").isArray()).isTrue();
         Assertions.assertThat(checkBuyingOfUser1Json.get("wishes").size()).isEqualTo(0);
+
+        // add some wishes
+        final String matchingUserNumber = firstName.substring(firstName.length() - 1);
+        final String wishesPayload = """
+                [
+                    {"title": "A", "url": "https://google.com", "power": 1},
+                    {"title": "B", "power": 2}
+                ]
+                """;
+        final ResponseEntity<Void> addedWishesOfMatchingUser = restTemplate.exchange(
+                "http://localhost:" + port + "/api/users/current/wish-list", HttpMethod.PUT,
+                new HttpEntity<>(wishesPayload, headers("User" + matchingUserNumber, "user" + matchingUserNumber)),
+                Void.class);
+        Assertions.assertThat(addedWishesOfMatchingUser.getStatusCodeValue()).isEqualTo(200);
+        Mockito.verify(outgoingEmails).sendWishesUpdate("rubin94+01@`gmail.com",
+                new WishListChange(List.of(), List.of(
+                        new DtoWishRecipient(null, "B", null, 2),
+                        new DtoWishRecipient(null, "A", "https://google.com", 1))));
+        Mockito.reset(outgoingEmails);
+
+        final ResponseEntity<String> getWishesOfMatchingUserByMatchingUser = restTemplate.exchange(
+                "http://localhost:" + port + "/api/users/current/wish-list", HttpMethod.GET,
+                new HttpEntity<>(headers("User" + matchingUserNumber, "user" + matchingUserNumber)),
+                String.class);
+        Assertions.assertThat(getWishesOfMatchingUserByMatchingUser.getStatusCodeValue()).isEqualTo(200);
+        final JsonNode matchingUserWishes = OBJECT_MAPPER.readTree(getWishesOfMatchingUserByMatchingUser.getBody());
+        Assertions.assertThat(matchingUserWishes.get("locked").asBoolean()).isFalse();
+        Assertions.assertThat(matchingUserWishes.get("wishes").isArray()).isTrue();
+        assertWish(matchingUserWishes.get("wishes").get(0), "A", "https://google.com", 1);
+        assertWish(matchingUserWishes.get("wishes").get(1), "B", null, 2);
+
+        // recheck match of user 1. In particular, we check whether wishes are returned.
+        final ResponseEntity<String> recheckBuyingOfUser1 = restTemplate.exchange(
+                "http://localhost:" + port + "/api/lottery", HttpMethod.GET,
+                new HttpEntity<>(headers("User1", "user1")), String.class);
+        JsonNode recheckBuyingOfUser1Json = OBJECT_MAPPER.readTree(recheckBuyingOfUser1.getBody());
+        Assertions.assertThat(recheckBuyingOfUser1Json.get("wishes").isArray()).isTrue();
+        Assertions.assertThat(recheckBuyingOfUser1Json.get("wishes").size()).isEqualTo(2);
+        assertWish(recheckBuyingOfUser1Json.get("wishes").get(0), "A", "https://google.com", 1);
+        assertWish(recheckBuyingOfUser1Json.get("wishes").get(1), "B", null, 2);
+
+        // update wishes
+        final String updatedWishesPayload = """
+                [
+                    {"title": "B", "power": 2},
+                    {"title": "C", "power": 1}
+                ]
+                """;
+        final ResponseEntity<Void> updateWishesOfMatchingUser = restTemplate.exchange(
+                "http://localhost:" + port + "/api/users/current/wish-list", HttpMethod.PUT,
+                new HttpEntity<>(updatedWishesPayload, headers("User" + matchingUserNumber, "user" + matchingUserNumber)),
+                Void.class);
+        Assertions.assertThat(updateWishesOfMatchingUser.getStatusCodeValue()).isEqualTo(200);
+        Mockito.verify(outgoingEmails).sendWishesUpdate("rubin94+01@`gmail.com",
+                new WishListChange(
+                        List.of(
+                                new DtoWishRecipient(55, "B", null, 2),
+                                new DtoWishRecipient(56, "A", "https://google.com", 1)),
+                        List.of(
+                                new DtoWishRecipient(null, "B", null, 2),
+                                new DtoWishRecipient(null, "C", null, 1))));
+    }
+
+    private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {
+        Assertions.assertThat(firstWish.get("id").isNull()).isFalse();
+        Assertions.assertThat(firstWish.get("title").asText()).isEqualTo(expectedTitle);
+        if (expectedUrl == null) {
+            Assertions.assertThat(firstWish.get("url").isNull()).isTrue();
+        } else {
+            Assertions.assertThat(firstWish.get("url").asText()).isEqualTo(expectedUrl);
+        }
+        Assertions.assertThat(firstWish.get("power").asInt()).isEqualTo(expectedPower);
     }
 
     private LinkedMultiValueMap<String, String> adminHeaders() {
@@ -97,6 +173,7 @@ public class AppIT {
         final LinkedMultiValueMap<String, String> authHeaders = new LinkedMultiValueMap<>();
         authHeaders.add("Authorization", encodeCredentials(login, password));
         authHeaders.add("X-Forwarded-Proto", "https");
+        authHeaders.add("Content-type", "application/json");
         return authHeaders;
     }
 

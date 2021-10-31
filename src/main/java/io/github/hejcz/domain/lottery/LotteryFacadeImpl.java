@@ -116,13 +116,14 @@ public class LotteryFacadeImpl implements LotteryFacade {
     @Transactional
     public void updateWishes(Integer recipientId, Set<DtoWishRecipient> currentWishes) {
         Collection<DbWish> wishesInDb = wishesRepository.findByRecipientId(recipientId);
-        // hibernate could change wishesInDb elements after save
+        // copy wishes, so we can pass old wishlist to e-mail sender.
         Set<DtoWishRecipient> previousWishes = wishesInDb.stream().map(DbWish::toDto).collect(Collectors.toSet());
         final boolean nothingChanged = currentWishes.size() == previousWishes.size()
                 && Sets.difference(currentWishes, previousWishes).isEmpty();
         if (nothingChanged) {
             return;
         }
+        // TODO this looks weird - why do I delete all wishes? Is this for simplicity?
         wishesRepository.deleteAll(wishesInDb);
         saveWishes(recipientId, currentWishes);
         sendEmailToGiverIfAssigned(recipientId, Lists.newLinkedList(previousWishes), currentWishes);
