@@ -10,28 +10,17 @@ import java.util.stream.Collectors;
 
 public class DtoMapper {
     public static RecipientWishes getRecipientWishes(DtoWishGiver oldDto) {
-        RecipientWishes recipientWishes = new RecipientWishes();
-        recipientWishes.setFirstName(oldDto.recipientName());
-        recipientWishes.setLastName(oldDto.recipientSurname());
-        recipientWishes.setLocked(oldDto.locked());
-        recipientWishes.setWishes(mapWishes(oldDto.recipientWishes()));
-        return recipientWishes;
+        return new RecipientWishes(oldDto.recipientName(), oldDto.recipientSurname(),
+                oldDto.locked(), mapWishes(oldDto.recipientWishes()));
     }
 
     public static List<Wish> mapWishes(Collection<DtoWishRecipient> wishes) {
-        return wishes.stream().map(oldWish -> {
-            Wish wish = new Wish();
-            wish.setId(oldWish.getId());
-            wish.setPower(oldWish.getPower());
-            wish.setTitle(oldWish.getText());
-            wish.setUrl(oldWish.getUrl());
-            return wish;
-        }).collect(Collectors.toList());
+        return wishes.stream()
+                .map(oldWish -> new Wish(oldWish.id(), oldWish.text(), oldWish.url(), oldWish.power()))
+                .collect(Collectors.toList());
     }
 
     public static RecipientWishes noWishes() {
-        RecipientWishes recipientWishes = new RecipientWishes();
-        recipientWishes.setWishes(Collections.emptyList());
-        return recipientWishes;
+        return new RecipientWishes(null, null, false, Collections.emptyList());
     }
 }

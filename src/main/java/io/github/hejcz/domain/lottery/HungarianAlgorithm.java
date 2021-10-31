@@ -219,7 +219,7 @@ class HungarianAlgorithm {
                 for (int j = 0; j < dim; j++) {
                     if (parentWorkerByCommittedJob[j] == -1) {
                         double slack = costMatrix[worker][j] - labelByWorker[worker]
-                            - labelByJob[j];
+                                - labelByJob[j];
                         if (minSlackValueByJob[j] > slack) {
                             minSlackValueByJob[j] = slack;
                             minSlackWorkerByJob[j] = worker;
@@ -251,7 +251,7 @@ class HungarianAlgorithm {
         for (int w = 0; w < dim; w++) {
             for (int j = 0; j < dim; j++) {
                 if (matchJobByWorker[w] == -1 && matchWorkerByJob[j] == -1
-                    && costMatrix[w][j] - labelByWorker[w] - labelByJob[j] == 0) {
+                        && costMatrix[w][j] - labelByWorker[w] - labelByJob[j] == 0) {
                     match(w, j);
                 }
             }
@@ -271,7 +271,7 @@ class HungarianAlgorithm {
         committedWorkers[w] = true;
         for (int j = 0; j < dim; j++) {
             minSlackValueByJob[j] = costMatrix[w][j] - labelByWorker[w]
-                - labelByJob[j];
+                    - labelByJob[j];
             minSlackWorkerByJob[j] = w;
         }
     }

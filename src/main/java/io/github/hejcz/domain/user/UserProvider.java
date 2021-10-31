@@ -1,6 +1,5 @@
 package io.github.hejcz.domain.user;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -8,16 +7,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 class UserProvider {
 
     private final UserRepository userRepository;
 
+    public UserProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     Collection<DtoUser> all() {
         return userRepository.findBySystemRole(SystemRole.USER)
-            .stream()
-            .map(DbUser::toDto)
-            .collect(Collectors.toSet());
+                .stream()
+                .map(DbUser::toDto)
+                .collect(Collectors.toSet());
     }
 
     void save(DtoUser dtoUser) {
@@ -26,7 +28,7 @@ class UserProvider {
 
     Optional<DtoUser> byLogin(String username) {
         return userRepository.findByLoginIgnoreCase(username)
-            .map(DbUser::toDto);
+                .map(DbUser::toDto);
     }
 
     DbUser byId(Integer id) {

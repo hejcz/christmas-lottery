@@ -2,6 +2,8 @@ santa:
   url: http://localhost:9000
 spring:
   jpa:
+    generate-ddl: true
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
   datasource:
@@ -9,3 +11,6 @@ spring:
     username: santa
     password: example
     initialization-mode: always
+    driver-class-name: org.postgresql.Driver
+server:
+  forward-headers-strategy: native

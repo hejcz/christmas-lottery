@@ -40,10 +40,10 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
     }
 
     private long score(AnnualMatches best) {
-        Collection<Match> matches = best.getMatches();
+        Collection<Match> matches = best.matches();
         return -matches.stream()
-            .filter(it -> matches.contains(new Match(it.recipient(), it.giver())))
-            .count();
+                .filter(it -> matches.contains(new Match(it.recipient(), it.giver())))
+                .count();
     }
 
     /**
@@ -54,16 +54,16 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
      * to w zależności od liczby porządkowej A i B silnik wyznaczy kombinacje
      * A -> C i B -> D lub A -> D i B -> C. Wynika to z zasad działania algorytmu.
      */
-    private OrderedUsers orderUsers(Set<User> users) {
+    private OrderedUsers orderUsers(Set<UserId> users) {
         int nextOrdinal = 0;
-        List<User> shuffledUsers = new ArrayList<>(users);
+        List<UserId> shuffledUsers = new ArrayList<>(users);
         Collections.shuffle(shuffledUsers);
-        Map<Integer, User> ordinalToUser = new HashMap<>();
+        Map<Integer, UserId> ordinalToUser = new HashMap<>();
         Map<Integer, OrderedUser> idToOrderedUser = new HashMap<>();
-        for (User user : shuffledUsers) {
+        for (UserId user : shuffledUsers) {
             int ordinal = nextOrdinal++;
             ordinalToUser.put(ordinal, user);
-            idToOrderedUser.put(user.getId(), new OrderedUser(user, ordinal));
+            idToOrderedUser.put(user.id(), new OrderedUser(user, ordinal));
         }
         return new OrderedUsers(ordinalToUser, idToOrderedUser);
     }
@@ -83,13 +83,13 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
     private double[][] createCostMatrix(MatchesHistory matchesHistory,
                                         OrderedUsers users,
                                         Collection<ForbiddenMatch> forbiddenMatches) {
-        Map<Integer, OrderedUser> userToOrderedUser = users.getUserToOrderedUser();
+        Map<Integer, OrderedUser> userToOrderedUser = users.userToOrderedUser();
         double[][] matrix = new double[userToOrderedUser.size()][userToOrderedUser.size()];
 
-        for (AnnualMatches annualMatches : matchesHistory.getAnnualMatches()) {
-            for (Match match : annualMatches.getMatches()) {
-                OrderedUser giver = userToOrderedUser.get(match.giver().getId());
-                OrderedUser recipient = userToOrderedUser.get(match.recipient().getId());
+        for (AnnualMatches annualMatches : matchesHistory.annualMatches()) {
+            for (Match match : annualMatches.matches()) {
+                OrderedUser giver = userToOrderedUser.get(match.giver().id());
+                OrderedUser recipient = userToOrderedUser.get(match.recipient().id());
                 if (giver != null && recipient != null) {
                     ++matrix[giver.ordinal()][recipient.ordinal()];
                 }
@@ -102,8 +102,8 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         }
 
         forbiddenMatches.forEach(forbiddenMatch -> {
-            Integer first = userToOrderedUser.get(forbiddenMatch.firstUserId).ordinal();
-            Integer second = userToOrderedUser.get(forbiddenMatch.secondUserId).ordinal();
+            Integer first = userToOrderedUser.get(forbiddenMatch.getFirstUserId()).ordinal();
+            Integer second = userToOrderedUser.get(forbiddenMatch.getSecondUserId()).ordinal();
             matrix[first][second] = IMPOSSIBLE;
             matrix[second][first] = IMPOSSIBLE;
         });
@@ -120,12 +120,12 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
      */
     private AnnualMatches convertToAnnualMatches(int[] hungarianAlgorithmResult,
                                                  OrderedUsers orderedUsers) {
-        Map<Integer, User> ordinalToUser = orderedUsers.getOrdinalToUser();
+        Map<Integer, UserId> ordinalToUser = orderedUsers.ordinalToUser();
         return new AnnualMatches(
-            Stream.iterate(0, i -> ++i)
-                .limit(hungarianAlgorithmResult.length)
-                .map(i -> new Match(ordinalToUser.get(i), ordinalToUser.get(hungarianAlgorithmResult[i])))
-                .collect(Collectors.toList())
+                Stream.iterate(0, i -> ++i)
+                        .limit(hungarianAlgorithmResult.length)
+                        .map(i -> new Match(ordinalToUser.get(i), ordinalToUser.get(hungarianAlgorithmResult[i])))
+                        .collect(Collectors.toList())
         );
     }
 

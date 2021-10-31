@@ -19,10 +19,10 @@ interface MatchRepository extends CrudRepository<DbMatch, Integer> {
 
     default Optional<DbMatch> currentMatch(Integer giverId) {
         return findByGiverId(giverId)
-            .stream()
-            .filter(dbMatch ->
-                dbMatch.getCreationDate().toLocalDateTime().getYear() == LocalDateTime.now().getYear())
-            .findFirst();
+                .stream()
+                .filter(dbMatch ->
+                        dbMatch.getCreationDate().toLocalDateTime().getYear() == LocalDateTime.now().getYear())
+                .findFirst();
     }
 
     void deleteByCreationDateBetween(Timestamp startOfCurrentYear, Timestamp startOfNextYear);

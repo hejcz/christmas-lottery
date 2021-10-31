@@ -1,19 +1,20 @@
 package io.github.hejcz.domain.user;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class UserFacadeImpl implements UserFacade {
 
     private final UserProvider userProvider;
+
+    public UserFacadeImpl(UserProvider userProvider) {
+        this.userProvider = userProvider;
+    }
 
     @Override
     public void save(DtoUser dtoUser) {

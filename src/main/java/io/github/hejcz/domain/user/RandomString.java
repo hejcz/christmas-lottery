@@ -1,7 +1,6 @@
 package io.github.hejcz.domain.user;
 
 import java.security.SecureRandom;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 

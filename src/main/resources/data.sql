@@ -1,9 +1,9 @@
 INSERT INTO users (id, login, name, surname, email, password, system_role) VALUES
-(1, 'jrubin1', 'Julian1', 'Rubin1', 'rubin94+01@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
-(2, 'jrubin2', 'Julian2', 'Rubin2', 'rubin94+02@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
-(3, 'jrubin3', 'Julian3', 'Rubin3', 'rubin94+03@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
-(4, 'jrubin4', 'Julian4', 'Rubin4', 'rubin94+04@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 0),
-(5, 'jrubin5', 'Julian5', 'Rubin5', 'rubin94+05@gmail.com', '$2a$10$IOmaHx4I4qRgb.Nxdu6aiO/PQRQMN/uKEH.j51xSX/uIliQaP5Aju', 1);
+(1, 'User1', 'Name1', 'Surname1', 'rubin94+01@`gmail.com', '$2a$10$qOWF.yhmrcBy8KE3Y4mjLOcEEIa6Coo471fMmPoo.iYwNFs7tVlH6', 0),
+(2, 'User2', 'Name2', 'Surname2', 'rubin94+02@`gmail.com', '$2a$10$rCqJVYCnJ9tcxW5NalEyNOrUNfG/2adj3chguUQi2FPpRphetgOnC', 0),
+(3, 'User3', 'Name3', 'Surname3', 'rubin94+03@`gmail.com', '$2a$10$IoXLf4nHXviOcn1cAtGyMObDBL4O6mpKJPYbekCPiQCbm6vslkQQO', 0),
+(4, 'User4', 'Name4', 'Surname4', 'rubin94+04@`gmail.com', '$2a$10$bFQ4o/BYOPSDqjYRBPXVcu2hpZl0I0Olh7zWJ0J/LvQBOgCZ.CDpO', 0),
+(5, 'Admin', '', '', 'rubin94+05@gmail.com', '$2a$10$EWvtUxADjhuTDGnQWiMg/eeoSrYngRsyRuvnYdX/I57UQptG9YTXS', 1);
 
 INSERT INTO matches (id, creation_date, giver_id, recipient_id, locked) VALUES
 (1, '2018-04-03', 1, 2, false),

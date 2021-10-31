@@ -1,21 +1,14 @@
 package io.github.hejcz.domain.lottery;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Value;
+import com.google.common.collect.ImmutableSet;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Value
-class Group {
+record Group(Set<UserId> users) {
 
-    @Getter(AccessLevel.NONE)
-    Set<User> users;
-
-    Set<User> toSet() {
-        return new HashSet<>(users);
+    Set<UserId> toSet() {
+        return ImmutableSet.copyOf(users);
     }
 
     boolean hasMultipleMembers() {
@@ -23,7 +16,7 @@ class Group {
     }
 
     Set<Integer> membersIds() {
-        return users.stream().map(User::getId).collect(Collectors.toSet());
+        return users.stream().map(UserId::id).collect(Collectors.toSet());
     }
 
 }

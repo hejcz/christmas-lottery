@@ -1,23 +1,27 @@
 package io.github.hejcz.domain.user;
 
 import io.github.hejcz.integration.email.OutgoingEmails;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@RequiredArgsConstructor
 class UserSecurityFacadeImpl implements UserSecurityFacade {
 
     private final PasswordRecoveryTokenRepository passwordRecoveryTokenRepository;
-
     private final UserRepository userRepository;
-
     private final OutgoingEmails outgoingEmails;
-
     private final PasswordEncoder passwordEncoder;
+
+    public UserSecurityFacadeImpl(PasswordRecoveryTokenRepository passwordRecoveryTokenRepository,
+                                  UserRepository userRepository, OutgoingEmails outgoingEmails,
+                                  PasswordEncoder passwordEncoder) {
+        this.passwordRecoveryTokenRepository = passwordRecoveryTokenRepository;
+        this.userRepository = userRepository;
+        this.outgoingEmails = outgoingEmails;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Value("${santa.url}")
     private String websiteAddress;
@@ -43,24 +47,24 @@ class UserSecurityFacadeImpl implements UserSecurityFacade {
 
     private String recoveryEmail(String token) {
         DbPasswordRecoveryToken existingToken =
-            passwordRecoveryTokenRepository.findByToken(token)
-            .orElseThrow(() -> new RuntimeException("Token does not exist"));
+                passwordRecoveryTokenRepository.findByToken(token)
+                        .orElseThrow(() -> new RuntimeException("Token does not exist"));
         passwordRecoveryTokenRepository.delete(existingToken);
         return existingToken.getEmail();
     }
 
     private void newPassword(String email, String newPassword) {
         DbUser user = userRepository.findByEmailIgnoreCase(email)
-            .orElseThrow(() -> new RuntimeException("No user with such e-mail"));
+                .orElseThrow(() -> new RuntimeException("No user with such e-mail"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
     private DbPasswordRecoveryToken newToken(String email) {
         return new DbPasswordRecoveryToken(
-            null,
-            new RandomString(20).nextString(),
-            email
+                null,
+                new RandomString(20).nextString(),
+                email
         );
     }
 

@@ -1,25 +1,38 @@
 package io.github.hejcz.domain.lottery;
 
-import lombok.Data;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Data
 @Entity
 @Table(name = "forbidden_match")
 class ForbiddenMatch {
 
     @Id
     @Column(nullable = false)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    Integer firstUserId;
+    private Integer firstUserId;
 
     @Column(nullable = false)
-    Integer secondUserId;
+    private Integer secondUserId;
 
+    public ForbiddenMatch() {
+    }
+
+    public ForbiddenMatch(Long id, Integer firstUserId, Integer secondUserId) {
+        this.id = id;
+        this.firstUserId = firstUserId;
+        this.secondUserId = secondUserId;
+    }
+
+    public Integer getFirstUserId() {
+        return firstUserId;
+    }
+
+    public Integer getSecondUserId() {
+        return secondUserId;
+    }
 }

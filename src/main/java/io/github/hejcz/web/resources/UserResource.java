@@ -1,12 +1,13 @@
 package io.github.hejcz.web.resources;
 
-import io.github.hejcz.domain.user.DtoUser;
 import io.github.hejcz.domain.user.SystemRole;
 import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.domain.user.UserSecurityFacade;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -16,21 +17,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequiredArgsConstructor
 class UserResource {
 
     private final UserFacade userFacade;
     private final UserSecurityFacade userSecurityFacade;
     private final HttpServletRequest httpRequest;
 
+    public UserResource(UserFacade userFacade, UserSecurityFacade userSecurityFacade, HttpServletRequest httpRequest) {
+        this.userFacade = userFacade;
+        this.userSecurityFacade = userSecurityFacade;
+        this.httpRequest = httpRequest;
+    }
+
     @GetMapping("api/users")
     @Secured("ADMIN")
     Collection<User> allUsers() {
         return userFacade.findRegularUsers()
-            .stream()
-            .map(user -> new User(user.id(), user.name(), user.surname()))
-            .sorted(Comparator.comparingInt(User::getId))
-            .collect(Collectors.toList());
+                .stream()
+                .map(user -> new User(user.id(), user.name(), user.surname()))
+                .sorted(Comparator.comparingInt(User::id))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("api/users/current/roles")
@@ -46,7 +52,7 @@ class UserResource {
 
     @PutMapping("api/passwords")
     void resetPassword(@RequestBody NewPassword newPassword) {
-        userSecurityFacade.changePassword(newPassword.getToken(), newPassword.getNewPassword());
+        userSecurityFacade.changePassword(newPassword.token(), newPassword.newPassword());
     }
 
 }
