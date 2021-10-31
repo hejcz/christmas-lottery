@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,10 +25,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserFacadeDetailsService userFacadeDetailsService;
     private final Environment environment;
+    private final CsrfTokenRepository csrfTokenRepository;
 
-    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService, Environment environment) {
+    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService, Environment environment,
+                          CsrfTokenRepository csrfTokenRepository) {
         this.userFacadeDetailsService = userFacadeDetailsService;
         this.environment = environment;
+        this.csrfTokenRepository = csrfTokenRepository;
     }
 
     @Override
@@ -36,8 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             http = http.requiresChannel().anyRequest().requiresSecure().and();
         }
 
-        final CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        csrfTokenRepository.setSecure(true);
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
@@ -55,6 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationProvider.setUserDetailsService(userFacadeDetailsService);
         authenticationProvider.setPasswordEncoder(encoder());
         return authenticationProvider;
+    }
+
+    @Bean
+    CsrfTokenRepository csrfTokenRepository() {
+        final CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setSecure(true);
+        return csrfTokenRepository;
     }
 
     @Bean

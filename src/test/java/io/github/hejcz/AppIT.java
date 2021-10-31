@@ -8,6 +8,8 @@ import io.github.hejcz.domain.lottery.WishListChange;
 import io.github.hejcz.domain.registration.RegistrationFacade;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -18,6 +20,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -59,6 +63,18 @@ public class AppIT {
 
     @Autowired
     private RegistrationFacade registrationFacade;
+
+    @MockBean
+    private CsrfTokenRepository csrfTokenRepository;
+
+    @BeforeEach
+    void beforeEach() {
+        Mockito.when(csrfTokenRepository.loadToken(Mockito.any()))
+                .thenReturn(new DefaultCsrfToken("X-XSRF-TOKEN", "_csrf", "csrftokenvalue"));
+        Mockito.when(csrfTokenRepository.generateToken(Mockito.any()))
+                .thenReturn(new DefaultCsrfToken("X-XSRF-TOKEN", "_csrf", "csrftokenvalue"));
+        Mockito.doNothing().when(csrfTokenRepository).saveToken(Mockito.any(), Mockito.any(), Mockito.any());
+    }
 
     @Test
     void simpleLotteryFlow() throws JsonProcessingException {
@@ -174,6 +190,7 @@ public class AppIT {
         authHeaders.add("Authorization", encodeCredentials(login, password));
         authHeaders.add("X-Forwarded-Proto", "https");
         authHeaders.add("Content-type", "application/json");
+        authHeaders.add("X-XSRF-TOKEN", "csrftokenvalue");
         return authHeaders;
     }
 
