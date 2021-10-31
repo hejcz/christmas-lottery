@@ -22,6 +22,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation "org.postgresql:postgresql:42.3.1"
     implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation "org.mapstruct:mapstruct:1.4.2.Final"
+    annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
@@ -36,3 +38,11 @@ test {
 
 task stage(dependsOn: ["build", "clean"])
 build.mustRunAfter clean
+
+// heroku can't run tests using testcontainers
+gradle.taskGraph.whenReady {
+    taskGraph ->
+        if (taskGraph.hasTask(stage) && taskGraph.hasTask(test)) {
+            test.enabled = false
+        }
+}
