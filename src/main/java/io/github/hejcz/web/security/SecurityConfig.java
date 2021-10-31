@@ -1,6 +1,7 @@
 package io.github.hejcz.web.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,26 +12,33 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserFacadeDetailsService userFacadeDetailsService;
+    private final Environment environment;
 
-    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService) {
+    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService, Environment environment) {
         this.userFacadeDetailsService = userFacadeDetailsService;
+        this.environment = environment;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .requiresChannel().anyRequest().requiresSecure()
-                .and()
-                .sessionManagement()
+        if (Arrays.stream(environment.getActiveProfiles()).noneMatch(p -> p.equals("dev"))) {
+            http = http.requiresChannel().anyRequest().requiresSecure().and();
+        }
+
+        final CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setSecure(true);
+        http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
                 .httpBasic()
@@ -38,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .csrf()
-                .disable();
+                .csrfTokenRepository(csrfTokenRepository);
     }
 
     @Bean
