@@ -159,9 +159,10 @@ public class AppIT {
         Assertions.assertThat(groupsResponse.getBody()).isNotNull();
         JsonNode groups = groupsResponse.getBody().get("_embedded").get("dbGroups");
         Assertions.assertThat(groups.isArray()).isTrue();
-        Assertions.assertThat(groups.size()).isEqualTo(2);
-        Assertions.assertThat(groups.get(0).get("name").asText()).isEqualTo("g1");
-        Assertions.assertThat(groups.get(1).get("name").asText()).isEqualTo("g2");
+        Assertions.assertThat(groups.size()).isEqualTo(3);
+        Assertions.assertThat(groups.get(0).get("name").asText()).isEqualTo("family");
+        Assertions.assertThat(groups.get(1).get("name").asText()).isEqualTo("g1");
+        Assertions.assertThat(groups.get(2).get("name").asText()).isEqualTo("g2");
     }
 
     private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {

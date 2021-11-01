@@ -6,6 +6,7 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
+    show-sql: true
   datasource:
     url: jdbc:postgresql:santa
     username: santa

@@ -2,12 +2,12 @@ package io.github.hejcz.domain.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.Set;
 
 @Entity
 @Table(name = "groups")
@@ -20,6 +20,9 @@ public class DbGroup {
 
     @Column(nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "groups")
+    private Set<DbUser> users;
 
     public DbGroup() {
     }
