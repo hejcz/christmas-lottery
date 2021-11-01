@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
@@ -20,6 +21,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -136,6 +138,30 @@ public class AppIT {
                         List.of(
                                 new DtoWishRecipient(null, "B", null, 2),
                                 new DtoWishRecipient(null, "C", null, 1))));
+    }
+
+    @Test
+    void userCanNotAccessGroups() {
+        Assertions.assertThatThrownBy(() ->
+                httpClient.exchange(HttpMethod.GET, "/api/groups", "User1", "user1", null, Void.class))
+                .isOfAnyClassIn(HttpClientErrorException.Forbidden.class);
+    }
+
+    @Test
+    void adminCanAccessGroups() {
+        httpClient.addGroup("""
+                {"name": "g1"}
+                """);
+        httpClient.addGroup("""
+                {"name": "g2"}
+                """);
+        ResponseEntity<JsonNode> groupsResponse = httpClient.getGroups();
+        Assertions.assertThat(groupsResponse.getBody()).isNotNull();
+        JsonNode groups = groupsResponse.getBody().get("_embedded").get("dbGroups");
+        Assertions.assertThat(groups.isArray()).isTrue();
+        Assertions.assertThat(groups.size()).isEqualTo(2);
+        Assertions.assertThat(groups.get(0).get("name").asText()).isEqualTo("g1");
+        Assertions.assertThat(groups.get(1).get("name").asText()).isEqualTo("g2");
     }
 
     private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {

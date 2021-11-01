@@ -10,6 +10,10 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+  data:
+    rest:
+      detection-strategy: ANNOTATED
+      base-path: /api
   datasource:
     url: ${JDBC_DATABASE_URL}
     driver-class-name: org.postgresql.Driver
