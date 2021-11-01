@@ -11,12 +11,16 @@ public interface UserFacade {
 
     Optional<DtoUser> findByLogin(String username);
 
-    DbUser findById(Integer id);
+    Optional<DbUser> findById(Integer id);
+
+    DbUser getById(Integer id);
 
     DtoUser loggedUserOrException();
 
     Integer loggedUserId();
 
     boolean isLoggedUserAdmin();
+
+    Collection<DtoUser> findUsersForLottery(Collection<Integer> ids, int groupId);
 
 }

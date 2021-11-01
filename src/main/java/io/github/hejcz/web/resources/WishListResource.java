@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/users/current/wish-list")
+@RequestMapping("api/ids/current/wish-list")
 class WishListResource {
 
     private final LotteryFacade lotteryFacade;
@@ -26,17 +26,18 @@ class WishListResource {
 
     @GetMapping
     @Secured("USER")
-    WishList loggedUserWishList() {
-        io.github.hejcz.domain.lottery.WishList wishList = lotteryFacade.wishesOf(userFacade.loggedUserId());
+    WishList loggedUserWishList(@RequestParam("groupId") int groupId) {
+        io.github.hejcz.domain.lottery.WishList wishList = lotteryFacade.wishesOf(userFacade.loggedUserId(), groupId);
         return new WishList(DtoMapper.mapWishes(wishList.wishes()), wishList.isLocked());
     }
 
     @PutMapping
     @Secured("USER")
-    void updateLoggedUserWishList(@RequestBody Collection<Wish> wishList) {
+    void updateLoggedUserWishList(@RequestBody WishlistUpdateDto dto) {
         lotteryFacade.updateWishes(
                 userFacade.loggedUserId(),
-                wishList.stream().map(Wish::toOldDto).collect(Collectors.toSet()));
+                dto.groupId(),
+                dto.wishes().stream().map(Wish::toOldDto).collect(Collectors.toSet()));
     }
 
 }

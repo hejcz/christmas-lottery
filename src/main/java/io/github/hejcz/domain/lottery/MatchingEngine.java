@@ -21,6 +21,6 @@ interface MatchingEngine {
      * @param forbiddenMatches
      * @return wyniki losowania.
      */
-    AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches);
+    AnnualMatches match(LotteryParticipants group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches);
 
 }

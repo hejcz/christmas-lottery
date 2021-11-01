@@ -1,24 +1,24 @@
 package io.github.hejcz.domain.lottery;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface LotteryFacade {
 
-    void performLottery(Collection<Integer> participatingUsersIds);
+    void performLottery(int groupId, List<Integer> participantsIds);
 
-    boolean annualLotteryNotPerformedYet();
+    boolean isLotteryRunning(int groupId);
 
-    Optional<DtoWishGiver> actualRecipientWishes(Integer giverId);
+    Optional<DtoWishGiver> getMatchWishes(Integer giverId, int groupId);
 
-    WishList wishesOf(Integer recipientId);
+    WishList wishesOf(Integer recipientId, int groupId);
 
-    void updateWishes(Integer recipientId, Set<DtoWishRecipient> wishes);
+    void updateWishes(Integer recipientId, int groupId, Set<DtoWishRecipient> wishes);
 
-    void deleteActualLottery();
+    void deleteActualLottery(int groupId);
 
-    void lockWishes();
+    void lockWishes(Integer giverId, int groupId);
 
-    void unlockWishes();
+    void unlockWishes(Integer giverId, int groupId);
 }

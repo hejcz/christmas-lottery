@@ -1,0 +1,3 @@
+-- empty
+
+SELECT 1;

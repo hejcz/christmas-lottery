@@ -1,15 +1,13 @@
 package io.github.hejcz.domain.lottery;
 
-import io.github.hejcz.domain.user.DbUser;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public record DtoWishRecipient(Integer id, String text, String url, Integer power) {
 
-    DbWish toDb(DbUser recipient) {
-        return new DbWish(id, Timestamp.valueOf(LocalDateTime.now()), text, url, power, recipient);
+    DbWish toDb(DbMatch match) {
+        return new DbWish(id, Timestamp.valueOf(LocalDateTime.now()), text, url, power, match);
     }
 
     // TODO we use Sets.difference so we don't want to rely on id (why?) but it's kinda hacky.

@@ -1,6 +1,5 @@
 package io.github.hejcz.domain.lottery;
 
-import io.github.hejcz.domain.user.DbUser;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -35,7 +34,7 @@ class DbWish {
     private Integer power;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private DbUser recipient;
+    private DbMatch match;
 
     DtoWishRecipient toDto() {
         return new DtoWishRecipient(id, text, url, power);
@@ -44,13 +43,13 @@ class DbWish {
     public DbWish() {
     }
 
-    public DbWish(Integer id, Timestamp creationDate, String text, String url, Integer power, DbUser recipient) {
+    public DbWish(Integer id, Timestamp creationDate, String text, String url, Integer power, DbMatch match) {
         this.id = id;
         this.creationDate = creationDate;
         this.text = text;
         this.url = url;
         this.power = power;
-        this.recipient = recipient;
+        this.match = match;
     }
 
     public String getText() {

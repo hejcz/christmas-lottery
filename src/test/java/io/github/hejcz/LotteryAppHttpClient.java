@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
 
 public class LotteryAppHttpClient {
 
@@ -25,24 +24,25 @@ public class LotteryAppHttpClient {
         return sendAsAdmin(HttpMethod.DELETE, "/api/lottery", Void.class, null);
     }
 
-    ResponseEntity<Boolean> getLotteryStatus() {
-        return sendAsAdmin(HttpMethod.GET, "/api/lottery/admin", Boolean.class, null);
+    ResponseEntity<Boolean> getLotteryStatus(int groupId) {
+        return sendAsAdmin(HttpMethod.GET, "/api/lottery/admin?groupId=" + groupId, Boolean.class, groupId);
     }
 
-    ResponseEntity<Void> startLottery(List<Integer> userIds) {
-        return sendAsAdmin(HttpMethod.PUT, "/api/lottery", Void.class, userIds);
+    ResponseEntity<Void> startLottery(String payload) {
+        return sendAsAdmin(HttpMethod.PUT, "/api/lottery", Void.class, payload);
     }
 
-    ResponseEntity<JsonNode> getMatchOfUser(int testUserSuffix) {
-        return sendAsUser(testUserSuffix, HttpMethod.GET, "/api/lottery", JsonNode.class, null);
+    ResponseEntity<JsonNode> getMatchOfUser(int testUserSuffix, int groupId) {
+        return sendAsUser(testUserSuffix, HttpMethod.GET, "/api/lottery?groupId=" + groupId, JsonNode.class, null);
     }
 
     ResponseEntity<Void> updateWishlist(int testUserSuffix, String wishesPayload) {
-        return sendAsUser(testUserSuffix, HttpMethod.PUT, "/api/users/current/wish-list", Void.class, wishesPayload);
+        return sendAsUser(testUserSuffix, HttpMethod.PUT, "/api/ids/current/wish-list", Void.class, wishesPayload);
     }
 
-    ResponseEntity<JsonNode> getWishesOf(int testUserSuffix) {
-        return sendAsUser(testUserSuffix, HttpMethod.GET, "/api/users/current/wish-list", JsonNode.class, null);
+    ResponseEntity<JsonNode> getWishesOf(int testUserSuffix, int groupId) {
+        return sendAsUser(testUserSuffix, HttpMethod.GET, "/api/ids/current/wish-list?groupId=" + groupId,
+                JsonNode.class, null);
     }
 
     public void addGroup(String payload) {

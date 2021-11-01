@@ -19,3 +19,7 @@ spring:
       base-path: /api
 server:
   forward-headers-strategy: native
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.type: trace

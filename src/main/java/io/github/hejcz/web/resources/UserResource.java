@@ -29,7 +29,7 @@ class UserResource {
         this.httpRequest = httpRequest;
     }
 
-    @GetMapping("api/users")
+    @GetMapping("api/ids")
     @Secured("ADMIN")
     Collection<User> allUsers() {
         return userFacade.findRegularUsers()
@@ -39,7 +39,7 @@ class UserResource {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("api/users/current/roles")
+    @GetMapping("api/ids/current/roles")
     @Secured({"USER", "ADMIN"})
     List<SystemRole> roles() {
         return Collections.singletonList(userFacade.loggedUserOrException().systemRole());

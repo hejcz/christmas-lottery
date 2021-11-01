@@ -2,6 +2,7 @@ package io.github.hejcz.web.resources;
 
 import io.github.hejcz.domain.lottery.DtoWishGiver;
 import io.github.hejcz.domain.lottery.DtoWishRecipient;
+import io.github.hejcz.domain.lottery.StartLotteryRequest;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,5 +23,9 @@ public class DtoMapper {
 
     public static RecipientWishes noWishes() {
         return new RecipientWishes(null, null, false, Collections.emptyList());
+    }
+
+    public static StartLotteryRequest map(StartLotteryDto dto) {
+        return new StartLotteryRequest(dto.groupId(), List.copyOf(dto.participantsIds()));
     }
 }

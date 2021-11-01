@@ -2,7 +2,9 @@ package io.github.hejcz.domain.lottery;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import io.github.hejcz.domain.user.DbGroup;
 import io.github.hejcz.domain.user.DbUser;
+import io.github.hejcz.domain.user.GroupRepository;
 import io.github.hejcz.domain.user.UserFacade;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import org.springframework.stereotype.Component;
@@ -12,7 +14,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -27,53 +28,52 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private final OutgoingEmails outgoingEmails;
     private final MatchRepository matchRepository;
     private final WishesRepository wishesRepository;
+    private final GroupRepository groupRepository;
     private final ForbiddenMatchRepository forbiddenMatchRepository;
 
     public LotteryFacadeImpl(UserFacade userFacade, MatchingEngine matchingEngine, OutgoingEmails outgoingEmails,
                              MatchRepository matchRepository, WishesRepository wishesRepository,
-                             ForbiddenMatchRepository forbiddenMatchRepository) {
+                             GroupRepository groupRepository, ForbiddenMatchRepository forbiddenMatchRepository) {
         this.userFacade = userFacade;
         this.matchingEngine = matchingEngine;
         this.outgoingEmails = outgoingEmails;
         this.matchRepository = matchRepository;
         this.wishesRepository = wishesRepository;
+        this.groupRepository = groupRepository;
         this.forbiddenMatchRepository = forbiddenMatchRepository;
     }
 
     @Override
     @Transactional
-    public void performLottery(Collection<Integer> participatingUsersIds) {
-        Group group = new Group(users(participatingUsersIds));
-        if (group.hasMultipleMembers()) {
-            matchRepository.saveAll(lotteryResults(group));
-            wishesRepository.deleteAll();
+    public void performLottery(int groupId, List<Integer> participantsIds) {
+        if (isLotteryRunning(groupId)) {
+            return;
+        }
+        final Set<UserId> lotteryParticipantsIds =
+                userFacade.findUsersForLottery(participantsIds, groupId)
+                        .stream()
+                        .map(userDto -> new UserId(userDto.id()))
+                        .collect(Collectors.toSet());
+        final LotteryParticipants lotteryParticipants = new LotteryParticipants(lotteryParticipantsIds);
+        if (lotteryParticipants.ids().size() > 1) {
+            final Set<Match> matchesHistory = matchRepository.findByGroupId(groupId).stream()
+                    .map(DbMatch::asMatch)
+                    .collect(Collectors.toSet());
+            final Collection<ForbiddenMatch> forbiddenMatches =
+                    forbiddenMatchRepository.findForbiddenMatchesBetweenUsersInLottery(lotteryParticipants.toActualIds());
+            final AnnualMatches newMatches = matchingEngine.match(lotteryParticipants,
+                    new MatchesHistory(Set.of(new AnnualMatches(matchesHistory))), forbiddenMatches);
+            matchRepository.saveAll(newMatches.matches().stream()
+                    .map(match -> matchToDbMatch(match, groupRepository.getById(groupId)))
+                    .collect(Collectors.toList()));
+            wishesRepository.deleteByMatch_Group_Id(groupId);
         }
     }
 
-    private Set<UserId> users(Collection<Integer> participatingUsersIds) {
-        return userFacade.findRegularUsers()
-                .stream()
-                .filter(dtoUser -> participatingUsersIds.contains(dtoUser.id()))
-                .map(userDto -> new UserId(userDto.id()))
-                .collect(Collectors.toSet());
-    }
-
-    private List<DbMatch> lotteryResults(Group group) {
-        AnnualMatches history =
-                new AnnualMatches(matchRepository.findAll().stream().map(DbMatch::asMatch).collect(Collectors.toSet()));
-        Collection<ForbiddenMatch> forbiddenMatches =
-                forbiddenMatchRepository.findForbiddenMatchesBetweenUsersInLottery(group.membersIds());
-        return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)), forbiddenMatches)
-                .matches()
-                .stream()
-                .map(this::matchToDbMatch)
-                .collect(Collectors.toList());
-    }
-
     @Override
-    public boolean annualLotteryNotPerformedYet() {
-        return matchRepository.findByCreationDateBetween(startOfCurrentYear(), startOfNextYear())
-                .isEmpty();
+    public boolean isLotteryRunning(int groupId) {
+        return matchRepository.countByCreationDateBetweenAndGroupId(startOfCurrentYear(),
+                startOfNextYear(), groupId) > 0;
     }
 
     private Timestamp startOfCurrentYear() {
@@ -85,26 +85,32 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     @Override
-    public Optional<DtoWishGiver> actualRecipientWishes(Integer giverId) {
-        return matchRepository.currentMatch(giverId)
-                .map(this::createWishGiverDto);
+    public Optional<DtoWishGiver> getMatchWishes(Integer giverId, int groupId) {
+        return matchRepository.currentMatch(giverId, groupId)
+                .map(match -> createWishGiverDto(match, groupId));
     }
 
-    private DtoWishGiver createWishGiverDto(DbMatch match) {
+    private DtoWishGiver createWishGiverDto(DbMatch match, int groupId) {
         return new DtoWishGiver(
                 match.getRecipient().getName(),
                 match.getRecipient().getSurname(),
                 match.isLocked(),
-                wishesOf(match.getRecipient().getId()).wishes()
+                wishesOf(match.getRecipient().getId(), groupId).wishes()
         );
     }
 
     @Override
-    public WishList wishesOf(Integer recipientId) {
-        boolean isLocked = currentMatch(recipientId).map(DbMatch::isLocked).orElse(false);
+    public WishList wishesOf(Integer recipientId, int groupId) {
+        Optional<DbMatch> dbMatch = currentMatch(recipientId, groupId);
+        if (dbMatch.isEmpty()) {
+            return new WishList(false, List.of());
+        }
+        boolean isLocked = dbMatch
+                .map(DbMatch::isLocked)
+                .orElse(false);
         return new WishList(
                 isLocked,
-                wishesRepository.findByRecipientId(recipientId)
+                wishesRepository.findByMatch_id(dbMatch.get().getId())
                         .stream()
                         .sorted(Comparator.comparing(DbWish::getText))
                         .map(DbWish::toDto)
@@ -114,8 +120,12 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     @Override
     @Transactional
-    public void updateWishes(Integer recipientId, Set<DtoWishRecipient> currentWishes) {
-        Collection<DbWish> wishesInDb = wishesRepository.findByRecipientId(recipientId);
+    public void updateWishes(Integer recipientId, int groupId, Set<DtoWishRecipient> currentWishes) {
+        Optional<DbMatch> dbMatch = currentMatch(recipientId, groupId);
+        if (dbMatch.isEmpty()) {
+            return;
+        }
+        Collection<DbWish> wishesInDb = wishesRepository.findByMatch_id(dbMatch.get().getId());
         // copy wishes, so we can pass old wishlist to e-mail sender.
         Set<DtoWishRecipient> previousWishes = wishesInDb.stream().map(DbWish::toDto).collect(Collectors.toSet());
         final boolean nothingChanged = currentWishes.size() == previousWishes.size()
@@ -125,24 +135,22 @@ public class LotteryFacadeImpl implements LotteryFacade {
         }
         // TODO this looks weird - why do I delete all wishes? Is this for simplicity?
         wishesRepository.deleteAll(wishesInDb);
-        saveWishes(recipientId, currentWishes);
-        sendEmailToGiverIfAssigned(recipientId, Lists.newLinkedList(previousWishes), currentWishes);
+        saveWishes(dbMatch.get(), currentWishes);
+        sendEmailToGiverIfAssigned(recipientId, Lists.newLinkedList(previousWishes), currentWishes, groupId);
     }
 
-    private void saveWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
-        DbUser recipient = userFacade.findById(recipientId);
+    private void saveWishes(DbMatch match, Collection<DtoWishRecipient> wishes) {
         wishesRepository.saveAll(
                 wishes.stream()
                         // poprawić żeby był update timestamp
-                        .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient))
-                        .collect(Collectors.toList())
-        );
+                        .map(dtoWishRecipient -> dtoWishRecipient.toDb(match))
+                        .collect(Collectors.toList()));
     }
 
     private void sendEmailToGiverIfAssigned(Integer recipientId,
                                             List<DtoWishRecipient> oldWishes,
-                                            Collection<DtoWishRecipient> newWishes) {
-        findGiverEmail(recipientId).ifPresent(email ->
+                                            Collection<DtoWishRecipient> newWishes, int groupId) {
+        findGiverEmail(recipientId, groupId).ifPresent(email ->
                 outgoingEmails.sendWishesUpdate(
                         email,
                         new WishListChange(
@@ -153,44 +161,41 @@ public class LotteryFacadeImpl implements LotteryFacade {
         );
     }
 
-    private Optional<String> findGiverEmail(Integer recipientId) {
-        return currentMatch(recipientId)
+    private Optional<String> findGiverEmail(Integer recipientId, int groupId) {
+        return currentMatch(recipientId, groupId)
                 .map(DbMatch::getGiver)
                 .map(DbUser::getEmail);
     }
 
-    private Optional<DbMatch> currentMatch(Integer recipientId) {
-        return matchRepository.findByRecipientIdAndCreationDateIsBetween(
-                recipientId, startOfCurrentYear(), startOfNextYear());
+    private Optional<DbMatch> currentMatch(Integer recipientId, int groupId) {
+        return matchRepository.findDistinctByRecipientIdAndCreationDateIsBetweenAndGroup_id(
+                recipientId, startOfCurrentYear(), startOfNextYear(), groupId);
     }
 
     @Override
     @Transactional
-    public void deleteActualLottery() {
-        matchRepository.deleteByCreationDateBetween(startOfCurrentYear(), startOfNextYear());
+    public void deleteActualLottery(int groupId) {
+        matchRepository.deleteByCreationDateBetweenAndGroupId(startOfCurrentYear(), startOfNextYear(),
+                groupId);
     }
 
     @Override
     @Transactional
-    public void lockWishes() {
-        matchRepository.currentMatch(userFacade.loggedUserId())
+    public void lockWishes(Integer giverId, int groupId) {
+        matchRepository.currentMatch(giverId, groupId)
                 .ifPresent(match -> match.setLocked(true));
     }
 
     @Override
     @Transactional
-    public void unlockWishes() {
-        matchRepository.currentMatch(userFacade.loggedUserId())
+    public void unlockWishes(Integer giverId, int groupId) {
+        matchRepository.currentMatch(giverId, groupId)
                 .ifPresent(match -> match.setLocked(false));
     }
 
-    private DbMatch matchToDbMatch(Match match) {
-        return new DbMatch(
-                null, null,
-                userFacade.findById(match.giver().id()),
-                userFacade.findById(match.recipient().id()),
-                false
-        );
+    private DbMatch matchToDbMatch(Match match, DbGroup group) {
+        return new DbMatch(null, null, userFacade.getById(match.giver().id()),
+                userFacade.getById(match.recipient().id()), false, group);
     }
 
 }

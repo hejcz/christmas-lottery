@@ -15,7 +15,7 @@ class UserProvider {
         this.userRepository = userRepository;
     }
 
-    Collection<DtoUser> all() {
+    Collection<DtoUser> findRegularUsers() {
         return userRepository.findBySystemRole(SystemRole.USER)
                 .stream()
                 .map(DbUser::toDto)
@@ -31,8 +31,15 @@ class UserProvider {
                 .map(DbUser::toDto);
     }
 
-    DbUser byId(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("no user with id " + id));
+    Optional<DbUser> findById(Integer id) {
+        return userRepository.findById(id);
     }
 
+    public Collection<DbUser> findRegularUsersByGroupIdAndIds(Collection<Integer> ids, int groupId) {
+        return userRepository.findByIdInAndSystemRoleAndGroups_Id(ids, SystemRole.USER, groupId);
+    }
+
+    public DbUser getById(Integer id) {
+        return userRepository.getById(id);
+    }
 }

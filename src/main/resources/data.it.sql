@@ -14,14 +14,14 @@ INSERT INTO users_groups (users_id, groups_id) VALUES
 (3, 1),
 (4, 1);
 
-INSERT INTO matches (id, creation_date, giver_id, recipient_id, locked) VALUES
-(1, '2018-04-03', 1, 2, false),
-(2, '2018-04-03', 2, 3, false),
-(3, '2018-04-03', 3, 4, false),
-(4, '2018-04-03', 4, 1, false);
+INSERT INTO matches (id, creation_date, giver_id, recipient_id, locked, group_id) VALUES
+(1, '2018-04-03', 1, 2, false, 1),
+(2, '2018-04-03', 2, 3, false, 1),
+(3, '2018-04-03', 3, 4, false, 1),
+(4, '2018-04-03', 4, 1, false, 1);
 
-INSERT INTO wishes (id, creation_date, text, power, recipient_id) VALUES
-(1, '2018-04-03', 'Płyn do naczyń', 2, 1),
-(2, '2018-04-03', 'Półka na książki', 3, 1);
+INSERT INTO wishes (id, creation_date, text, power, match_id) VALUES
+(1, '2018-04-03', 'Płyn do naczyń', 2, 4),
+(2, '2018-04-03', 'Półka na książki', 3, 4);
 
 SELECT setval('hibernate_sequence', 50);

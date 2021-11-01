@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UserFacadeImpl implements UserFacade {
@@ -23,7 +24,7 @@ public class UserFacadeImpl implements UserFacade {
 
     @Override
     public Collection<DtoUser> findRegularUsers() {
-        return userProvider.all();
+        return userProvider.findRegularUsers();
     }
 
     @Override
@@ -32,8 +33,13 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public DbUser findById(Integer id) {
-        return userProvider.byId(id);
+    public Optional<DbUser> findById(Integer id) {
+        return userProvider.findById(id);
+    }
+
+    @Override
+    public DbUser getById(Integer id) {
+        return userProvider.getById(id);
     }
 
     @Override
@@ -50,6 +56,13 @@ public class UserFacadeImpl implements UserFacade {
     @Override
     public boolean isLoggedUserAdmin() {
         return loggedUserOrException().systemRole() == SystemRole.ADMIN;
+    }
+
+    @Override
+    public Collection<DtoUser> findUsersForLottery(Collection<Integer> ids, int groupId) {
+        return userProvider.findRegularUsersByGroupIdAndIds(ids, groupId).stream()
+                .map(DbUser::toDto)
+                .collect(Collectors.toList());
     }
 
 }

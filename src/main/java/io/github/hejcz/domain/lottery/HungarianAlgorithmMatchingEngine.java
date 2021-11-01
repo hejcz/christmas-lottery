@@ -19,10 +19,10 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
     private static final int ITERATIONS = 500;
 
     @Override
-    public AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
+    public AnnualMatches match(LotteryParticipants lotteryParticipants, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
         AnnualMatches best = null;
         for (int i = 0; i < ITERATIONS; i++) {
-            OrderedUsers orderedUsers = orderUsers(group.toSet());
+            OrderedUsers orderedUsers = orderUsers(lotteryParticipants.toSet());
             AnnualMatches current = performAssignment(matchesHistory, orderedUsers, forbiddenMatches);
             if (best == null) {
                 best = current;

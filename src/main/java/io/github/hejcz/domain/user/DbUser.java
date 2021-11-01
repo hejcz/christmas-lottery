@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -43,7 +44,8 @@ public class DbUser {
     private Set<DbGroup> groups;
 
     DtoUser toDto() {
-        return new DtoUser(id, login, name, surname, password, email, systemRole);
+        return new DtoUser(id, login, name, surname, password, email, systemRole,
+                groups.stream().map(DbGroup::getId).collect(Collectors.toSet()));
     }
 
     public DbUser() {

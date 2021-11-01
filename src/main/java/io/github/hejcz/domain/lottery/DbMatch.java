@@ -1,10 +1,12 @@
 package io.github.hejcz.domain.lottery;
 
+import io.github.hejcz.domain.user.DbGroup;
 import io.github.hejcz.domain.user.DbUser;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,15 +35,20 @@ class DbMatch {
     @Column(nullable = false)
     private boolean locked;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    private DbGroup group;
+
     public DbMatch() {
     }
 
-    public DbMatch(Integer id, Timestamp creationDate, DbUser giver, DbUser recipient, boolean locked) {
+    public DbMatch(Integer id, Timestamp creationDate, DbUser giver, DbUser recipient, boolean locked,
+                   DbGroup group) {
         this.id = id;
         this.creationDate = creationDate;
         this.giver = giver;
         this.recipient = recipient;
         this.locked = locked;
+        this.group = group;
     }
 
     Match asMatch() {

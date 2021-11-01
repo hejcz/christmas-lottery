@@ -1,6 +1,5 @@
 package io.github.hejcz;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.hejcz.domain.lottery.DtoWishRecipient;
 import io.github.hejcz.domain.lottery.WishListChange;
@@ -20,6 +19,7 @@ import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpClientErrorException;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -68,19 +68,21 @@ public class AppIT {
     }
 
     @Test
-    void simpleLotteryFlow() throws JsonProcessingException {
-        // delete lottery
-        httpClient.deleteLottery();
+    @Sql(scripts = "/data.it.sql")
+    void simpleLotteryFlow() {
+        final int GROUP_ID = 1;
 
-        // check there is no lottery
-        final ResponseEntity<Boolean> lotteryStatusResponse = httpClient.getLotteryStatus();
+        // create new lottery
+        final ResponseEntity<Boolean> lotteryStatusResponse = httpClient.getLotteryStatus(GROUP_ID);
         Assertions.assertThat(lotteryStatusResponse.getBody()).isEqualTo(false);
 
         // start lottery
-        httpClient.startLottery(List.of(1, 2, 3, 4));
+        httpClient.startLottery("""
+                {"groupId": 1, "participantsIds": [1,2,3,4]}
+                """);
 
         // check match of user 1
-        final ResponseEntity<JsonNode> user1MatchResponse = httpClient.getMatchOfUser(1);
+        final ResponseEntity<JsonNode> user1MatchResponse = httpClient.getMatchOfUser(1, GROUP_ID);
         Assertions.assertThat(user1MatchResponse.getBody()).isNotNull();
         final String firstName = user1MatchResponse.getBody().get("firstName").textValue();
         Assertions.assertThat(firstName).isNotEqualTo("Name1");
@@ -94,10 +96,13 @@ public class AppIT {
         // add some wishes to matched user wishlist
         final int matchingUserNumber = Integer.parseInt(firstName.substring(firstName.length() - 1));
         final String wishesPayload = """
-                [
-                    {"title": "A", "url": "https://google.com", "power": 1},
-                    {"title": "B", "power": 2}
-                ]
+                {
+                    "groupId": 1,
+                    "wishes": [
+                        {"title": "A", "url": "https://google.com", "power": 1},
+                        {"title": "B", "power": 2}
+                    ]
+                }
                 """;
         httpClient.updateWishlist(matchingUserNumber, wishesPayload);
         Mockito.verify(outgoingEmails).sendWishesUpdate("rubin94+01@`gmail.com",
@@ -107,7 +112,7 @@ public class AppIT {
         Mockito.reset(outgoingEmails);
 
         // get self wishes as matched user
-        final ResponseEntity<JsonNode> matchingUserWishesResponse = httpClient.getWishesOf(matchingUserNumber);
+        final ResponseEntity<JsonNode> matchingUserWishesResponse = httpClient.getWishesOf(matchingUserNumber, GROUP_ID);
         Assertions.assertThat(matchingUserWishesResponse.getBody()).isNotNull();
         Assertions.assertThat(matchingUserWishesResponse.getBody().get("locked").asBoolean()).isFalse();
         Assertions.assertThat(matchingUserWishesResponse.getBody().get("wishes").isArray()).isTrue();
@@ -115,7 +120,7 @@ public class AppIT {
         assertWish(matchingUserWishesResponse.getBody().get("wishes").get(1), "B", null, 2);
 
         // recheck wishes of matched user as user1. We check that added wishes are now returned.
-        final ResponseEntity<JsonNode> user1MatchResponse2 = httpClient.getMatchOfUser(1);
+        final ResponseEntity<JsonNode> user1MatchResponse2 = httpClient.getMatchOfUser(1, GROUP_ID);
         Assertions.assertThat(user1MatchResponse2.getBody()).isNotNull();
         Assertions.assertThat(user1MatchResponse2.getBody().get("wishes").isArray()).isTrue();
         Assertions.assertThat(user1MatchResponse2.getBody().get("wishes").size()).isEqualTo(2);
@@ -124,10 +129,13 @@ public class AppIT {
 
         // update wishes
         final String updatedWishesPayload = """
-                [
-                    {"title": "B", "power": 2},
-                    {"title": "C", "power": 1}
-                ]
+                {
+                    "groupId": 1,
+                    "wishes": [
+                        {"title": "B", "power": 2},
+                        {"title": "C", "power": 1}
+                    ]
+                }
                 """;
         httpClient.updateWishlist(matchingUserNumber, updatedWishesPayload);
         Mockito.verify(outgoingEmails).sendWishesUpdate("rubin94+01@`gmail.com",
@@ -143,7 +151,7 @@ public class AppIT {
     @Test
     void userCanNotAccessGroups() {
         Assertions.assertThatThrownBy(() ->
-                httpClient.exchange(HttpMethod.GET, "/api/groups", "User1", "user1", null, Void.class))
+                        httpClient.exchange(HttpMethod.GET, "/api/groups", "User1", "user1", null, Void.class))
                 .isOfAnyClassIn(HttpClientErrorException.Forbidden.class);
     }
 
@@ -165,14 +173,14 @@ public class AppIT {
         Assertions.assertThat(groups.get(2).get("name").asText()).isEqualTo("g2");
     }
 
-    private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {
-        Assertions.assertThat(firstWish.get("id").isNull()).isFalse();
-        Assertions.assertThat(firstWish.get("title").asText()).isEqualTo(expectedTitle);
+    private void assertWish(JsonNode wish, String expectedTitle, String expectedUrl, int expectedPower) {
+        Assertions.assertThat(wish.get("id").isNull()).isFalse();
+        Assertions.assertThat(wish.get("title").asText()).isEqualTo(expectedTitle);
         if (expectedUrl == null) {
-            Assertions.assertThat(firstWish.get("url").isNull()).isTrue();
+            Assertions.assertThat(wish.get("url").isNull()).isTrue();
         } else {
-            Assertions.assertThat(firstWish.get("url").asText()).isEqualTo(expectedUrl);
+            Assertions.assertThat(wish.get("url").asText()).isEqualTo(expectedUrl);
         }
-        Assertions.assertThat(firstWish.get("power").asInt()).isEqualTo(expectedPower);
+        Assertions.assertThat(wish.get("power").asInt()).isEqualTo(expectedPower);
     }
 }
