@@ -1,9 +1,10 @@
-# Meet your santa
+# Christmas Lottery
 
-Simple web app to run a christmas lottery that:
-- ensures that every year you buy present to someone else. 
-- allows you to specify WHAT you want to receive and how MUCH you want it.
-- e-mails you every time your match changes their wishlist.
+Simple Christmas lottery app we use in my family. Key features:
+- each user buys a gift for someone else every year.
+- each user has a wishlist where they can note what they want and how much they want it.
+- every change on a wishlist triggers an e-mail to assigned santa.
+- wishlist might be locked by santa so assigned recipient does not modify it after buying.
 
 ## Local development
 
