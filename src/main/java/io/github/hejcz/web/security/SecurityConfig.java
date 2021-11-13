@@ -1,6 +1,5 @@
 package io.github.hejcz.web.security;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -9,10 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,26 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(daoAuthenticationProvider)
                 .csrf()
                 .csrfTokenRepository(csrfTokenRepository);
-    }
-
-    @Bean
-    static DaoAuthenticationProvider authenticationProvider(UserFacadeDetailsService userFacadeDetailsService) {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userFacadeDetailsService);
-        authenticationProvider.setPasswordEncoder(encoder());
-        return authenticationProvider;
-    }
-
-    @Bean
-    static CsrfTokenRepository csrfTokenRepository() {
-        final CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        csrfTokenRepository.setSecure(true);
-        return csrfTokenRepository;
-    }
-
-    @Bean
-    static PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
     }
 
     private static class NoWwwAuthenticateEntryPoint extends BasicAuthenticationEntryPoint {
