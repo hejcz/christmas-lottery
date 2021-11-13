@@ -23,13 +23,13 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserFacadeDetailsService userFacadeDetailsService;
+    private final DaoAuthenticationProvider daoAuthenticationProvider;
     private final Environment environment;
     private final CsrfTokenRepository csrfTokenRepository;
 
-    public SecurityConfig(UserFacadeDetailsService userFacadeDetailsService, Environment environment,
+    public SecurityConfig(DaoAuthenticationProvider daoAuthenticationProvider, Environment environment,
                           CsrfTokenRepository csrfTokenRepository) {
-        this.userFacadeDetailsService = userFacadeDetailsService;
+        this.daoAuthenticationProvider = daoAuthenticationProvider;
         this.environment = environment;
         this.csrfTokenRepository = csrfTokenRepository;
     }
@@ -46,13 +46,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .authenticationEntryPoint(new NoWwwAuthenticateEntryPoint())
                 .and()
-                .authenticationProvider(authenticationProvider())
+                .authenticationProvider(daoAuthenticationProvider)
                 .csrf()
                 .csrfTokenRepository(csrfTokenRepository);
     }
 
     @Bean
-    DaoAuthenticationProvider authenticationProvider() {
+    static DaoAuthenticationProvider authenticationProvider(UserFacadeDetailsService userFacadeDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userFacadeDetailsService);
         authenticationProvider.setPasswordEncoder(encoder());
@@ -60,14 +60,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    CsrfTokenRepository csrfTokenRepository() {
+    static CsrfTokenRepository csrfTokenRepository() {
         final CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfTokenRepository.setSecure(true);
         return csrfTokenRepository;
     }
 
     @Bean
-    PasswordEncoder encoder() {
+    static PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
