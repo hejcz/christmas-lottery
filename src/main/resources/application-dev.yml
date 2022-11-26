@@ -7,7 +7,7 @@ spring:
     hibernate:
       ddl-auto: create-drop
   datasource:
-    url: jdbc:postgresql:santa
+    url: jdbc:postgresql://localhost:8543/p1030_loteria
     username: santa
     password: example
     initialization-mode: always

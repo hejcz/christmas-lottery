@@ -5,3 +5,5 @@ frontend/node_modules
 frontend/build
 /src/main/resources/static/**
 out
+christmas-lottery-frontend/**
+src/main/resources/public/**

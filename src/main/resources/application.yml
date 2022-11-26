@@ -1,5 +1,5 @@
 santa:
-  url: https://meet-your-santa.herokuapp.com
+  url: https://santa.hejcz.usermd.net
 spring:
   jpa:
     open-in-view: false
@@ -11,10 +11,12 @@ spring:
           lob:
             non_contextual_creation: true
   datasource:
-    url: ${JDBC_DATABASE_URL}
+    url: jdbc:postgresql://pgsql55.mydevil.net:5432/p1030_loteria
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   mail:
-    host: smtp.mail.yahoo.com
+    host: mail55.mydevil.net
     port: 465
     properties:
       mail:
@@ -26,7 +28,7 @@ spring:
             enable: true
             required: true
     test-connection: true
-    username: meet_your_santa@yahoo.com
-    password: ${email.password}
+    username: ${EMAIL_USER}
+    password: ${EMAIL_PASSWORD}
 server:
   forward-headers-strategy: native
