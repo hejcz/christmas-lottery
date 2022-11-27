@@ -1,1 +1,0 @@
-web: java -Dserver.port=$PORT -jar build/libs/meet-your-santa-0.1.jar
