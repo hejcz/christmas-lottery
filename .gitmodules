@@ -1,0 +1,3 @@
+[submodule "christmas-lottery-frontend"]
+	path = christmas-lottery-frontend
+	url = https://github.com/hejcz/christmas-lottery-frontend.git
