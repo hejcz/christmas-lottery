@@ -6,11 +6,22 @@ spring:
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
+  sql:
+    init:
+      mode: always
   datasource:
     url: jdbc:postgresql://localhost:8543/p1030_loteria
     username: santa
     password: example
-    initialization-mode: always
+    continue-on-error: false
     driver-class-name: org.postgresql.Driver
+  profiles:
+    active: dev
 server:
   forward-headers-strategy: native
+logging:
+  level:
+    org:
+      springframework:
+        web: TRACE
+        security: TRACE

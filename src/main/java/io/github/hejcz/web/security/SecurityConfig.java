@@ -1,13 +1,14 @@
 package io.github.hejcz.web.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 
@@ -17,21 +18,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    private final DaoAuthenticationProvider daoAuthenticationProvider;
-    private final Environment environment;
-    private final CsrfTokenRepository csrfTokenRepository;
-
-    public SecurityConfig(DaoAuthenticationProvider daoAuthenticationProvider, Environment environment,
-                          CsrfTokenRepository csrfTokenRepository) {
-        this.daoAuthenticationProvider = daoAuthenticationProvider;
-        this.environment = environment;
-        this.csrfTokenRepository = csrfTokenRepository;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+            DaoAuthenticationProvider daoAuthenticationProvider, Environment environment,
+            CsrfTokenRepository csrfTokenRepository) throws Exception {
         if (Arrays.stream(environment.getActiveProfiles()).noneMatch(p -> p.equals("dev"))) {
             http = http.requiresChannel().anyRequest().requiresSecure().and();
         }
@@ -45,6 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(daoAuthenticationProvider)
                 .csrf()
                 .csrfTokenRepository(csrfTokenRepository);
+
+        return http.build();
     }
 
     private static class NoWwwAuthenticateEntryPoint extends BasicAuthenticationEntryPoint {
@@ -54,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        public void commence(HttpServletRequest request, HttpServletResponse response,
+                AuthenticationException authException) throws IOException {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
     }
