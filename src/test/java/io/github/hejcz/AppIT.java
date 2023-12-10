@@ -24,6 +24,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
@@ -44,6 +47,9 @@ public class AppIT {
     @MockBean
     private OutgoingEmails outgoingEmails;
 
+    @MockBean
+    private Clock clock;
+
     @DynamicPropertySource
     static void registerPgProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url",
@@ -63,6 +69,8 @@ public class AppIT {
         Mockito.when(csrfTokenRepository.generateToken(Mockito.any()))
                 .thenReturn(new DefaultCsrfToken("X-XSRF-TOKEN", "_csrf", "csrftokenvalue"));
         Mockito.doNothing().when(csrfTokenRepository).saveToken(Mockito.any(), Mockito.any(), Mockito.any());
+        // later than lottery in data.sql
+        Mockito.when(clock.instant()).thenReturn(LocalDate.of(2018, 4, 5).atStartOfDay().toInstant(ZoneOffset.UTC));
     }
 
     @Test

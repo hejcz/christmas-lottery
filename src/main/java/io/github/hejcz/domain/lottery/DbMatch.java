@@ -1,15 +1,8 @@
 package io.github.hejcz.domain.lottery;
 
 import io.github.hejcz.domain.user.DbUser;
-import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
@@ -21,7 +14,6 @@ class DbMatch {
     @Column(nullable = false)
     private Integer id;
 
-    @CreationTimestamp
     private Timestamp creationDate;
 
     @ManyToOne

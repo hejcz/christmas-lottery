@@ -22,7 +22,6 @@ class DbWish {
     @Column(nullable = false)
     private Integer id;
 
-    @CreationTimestamp
     private Timestamp creationDate;
 
     @Column(nullable = false)

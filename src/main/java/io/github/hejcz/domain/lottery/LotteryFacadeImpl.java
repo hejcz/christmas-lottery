@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,16 +23,18 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private final MatchRepository matchRepository;
     private final WishesRepository wishesRepository;
     private final ForbiddenMatchRepository forbiddenMatchRepository;
+    private final Clock clock;
 
     public LotteryFacadeImpl(UserFacade userFacade, MatchingEngine matchingEngine, OutgoingEmails outgoingEmails,
             MatchRepository matchRepository, WishesRepository wishesRepository,
-            ForbiddenMatchRepository forbiddenMatchRepository) {
+            ForbiddenMatchRepository forbiddenMatchRepository, Clock clock) {
         this.userFacade = userFacade;
         this.matchingEngine = matchingEngine;
         this.outgoingEmails = outgoingEmails;
         this.matchRepository = matchRepository;
         this.wishesRepository = wishesRepository;
         this.forbiddenMatchRepository = forbiddenMatchRepository;
+        this.clock = clock;
     }
 
     @Override
@@ -71,16 +74,22 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     private Timestamp startOfCurrentYear() {
-        return Timestamp.valueOf(LocalDateTime.now().withDayOfYear(1));
+        return Timestamp.from(LocalDate.ofInstant(clock.instant(), ZoneOffset.UTC)
+                .with(TemporalAdjusters.firstDayOfYear())
+                .atStartOfDay()
+                .toInstant(ZoneOffset.UTC));
     }
 
     private Timestamp startOfNextYear() {
-        return Timestamp.valueOf(LocalDateTime.now().withDayOfYear(1).plusYears(1));
+        return Timestamp.from(LocalDate.ofInstant(clock.instant(), ZoneOffset.UTC)
+                .with(TemporalAdjusters.firstDayOfNextYear())
+                .atStartOfDay()
+                .toInstant(ZoneOffset.UTC));
     }
 
     @Override
     public Optional<DtoWishGiver> actualRecipientWishes(Integer giverId) {
-        return matchRepository.currentMatch(giverId)
+        return currentMatch(giverId, clock.instant())
                 .map(this::createWishGiverDto);
     }
 
@@ -125,10 +134,11 @@ public class LotteryFacadeImpl implements LotteryFacade {
 
     private void saveWishes(Integer recipientId, Collection<DtoWishRecipient> wishes) {
         DbUser recipient = userFacade.findById(recipientId);
+        Instant now = clock.instant();
         wishesRepository.saveAll(
                 wishes.stream()
                         // poprawić żeby był update timestamp
-                        .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient))
+                        .map(dtoWishRecipient -> dtoWishRecipient.toDb(recipient, now))
                         .collect(Collectors.toList())
         );
     }
@@ -167,24 +177,32 @@ public class LotteryFacadeImpl implements LotteryFacade {
     @Override
     @Transactional
     public void lockWishes() {
-        matchRepository.currentMatch(userFacade.loggedUserId())
+        currentMatch(userFacade.loggedUserId(), clock.instant())
                 .ifPresent(match -> match.setLocked(true));
     }
 
     @Override
     @Transactional
     public void unlockWishes() {
-        matchRepository.currentMatch(userFacade.loggedUserId())
+        currentMatch(userFacade.loggedUserId(), clock.instant())
                 .ifPresent(match -> match.setLocked(false));
     }
 
     private DbMatch matchToDbMatch(Match match) {
         return new DbMatch(
-                null, null,
+                null, Timestamp.from(clock.instant()),
                 userFacade.findById(match.giver().id()),
                 userFacade.findById(match.recipient().id()),
                 false
         );
     }
 
+    private Optional<DbMatch> currentMatch(Integer giverId, Instant now) {
+        int currentYear = ZonedDateTime.ofInstant(now, ZoneOffset.UTC).getYear();
+        return matchRepository.findByGiverId(giverId)
+                .stream()
+                .filter(dbMatch ->
+                        dbMatch.getCreationDate().toLocalDateTime().getYear() == currentYear)
+                .findFirst();
+    }
 }
