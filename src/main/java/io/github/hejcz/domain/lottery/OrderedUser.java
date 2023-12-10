@@ -1,4 +1,4 @@
 package io.github.hejcz.domain.lottery;
 
-record OrderedUser(UserId user, Integer ordinal) {
+record OrderedUser(UserId user, Integer positionInMatrix) {
 }

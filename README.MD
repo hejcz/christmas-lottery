@@ -1,14 +1,18 @@
 # Christmas Lottery
 
-Simple Christmas lottery app we use in my family. Key features:
-- each user buys a gift for someone else every year.
-- each user has a wishlist where they can note what they want and how much they want it.
+This is a backend for a Christmas lottery app we use in my family. Rules it follows:
+
+- each family member buys a gift for someone else every year. If person A gifted B 2 times and C 3 times an algorithm
+  shold prefer B over C.
+- each user has a wishlist where they can note what they want and order their wishes from the least to the most
+  important.
 - every change on a wishlist triggers an e-mail to assigned santa.
 - wishlist might be locked by santa so assigned recipient does not modify it after buying.
+- there must an option to forbid certain matches e.g. wife and husband.
 
 ## Deployment
 
-One of the goals of this project was to host it without expenses, 
+One of the goals of this project was to host it without expenses,
 so right now the setup is:
 
 ### node and java version

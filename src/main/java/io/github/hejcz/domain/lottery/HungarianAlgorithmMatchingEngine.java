@@ -10,53 +10,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 @Component
 class HungarianAlgorithmMatchingEngine implements MatchingEngine {
 
-    private static final int IMPOSSIBLE = Integer.MAX_VALUE;
+    // score negates strong components count, so it may not be < than -1
+    public static final int MAX_POSSIBLE_SCORE = -1;
+    private static final int IMPOSSIBLE_MATCH = Integer.MAX_VALUE;
     private static final int ITERATIONS = 500;
 
+    /**
+     * This is the most interesting part. Hungarian algorithm is deterministic, so for the same input
+     * it will always return the same result. Some results are better and some are worse i.e.
+     * - for some time it was normal that for 6 people results were A -> B, B -> A, C -> D, D -> C etc.
+     * Once you knew it was pretty easy to guess who buys you a gift.
+     * - for the same group an engine would return the same results in a cycle, so after X years, where
+     * X is a (size of the group - 1) all future matches would be repeated.
+     * To fix latter I shuffle users, so an input is different and to fix prior I run many iterations
+     * (it was easier than improving an algorithm) and get a result without
+     */
     @Override
-    public AnnualMatches match(Group group, MatchesHistory matchesHistory, Collection<ForbiddenMatch> forbiddenMatches) {
+    public AnnualMatches match(Group group, MatchesHistory matchesHistory,
+            Collection<ForbiddenMatch> forbiddenMatches) {
         AnnualMatches best = null;
+        long bestScore = Integer.MIN_VALUE;
         for (int i = 0; i < ITERATIONS; i++) {
             OrderedUsers orderedUsers = orderUsers(group.toSet());
-            AnnualMatches current = performAssignment(matchesHistory, orderedUsers, forbiddenMatches);
+            AnnualMatches current = runAssignmentAlgorithm(matchesHistory, orderedUsers, forbiddenMatches);
             if (best == null) {
                 best = current;
+                bestScore = score(best);
             } else {
-                long bestScore = score(best);
-                if (bestScore == 0) {
-                    return best;
-                }
-                if (bestScore < score(current)) {
+                long currentScore = score(current);
+                if (bestScore < currentScore) {
                     best = current;
+                    bestScore = currentScore;
                 }
+            }
+            if (bestScore == MAX_POSSIBLE_SCORE) {
+                break;
             }
         }
         return best;
     }
 
-    // matching is better if:
-    // - there are no two nodes sub-graphs
-    // - TODO replace with "a graph is connected"
     private long score(AnnualMatches best) {
-        Collection<Match> matches = best.matches();
-        return -1 * matches.stream()
-                .filter(it -> matches.contains(new Match(it.recipient(), it.giver())))
-                .count();
+        return -1 * GraphHelper.countStrongComponents(best.matches());
     }
 
-    /**
-     * Każdemu użytkownikowi przypisuje kolejną liczbę naturalną.
-     * Algorytm węgierski jest deterministyczny. Żeby wprowadzić element losowości można
-     * losować liczbę porządkową użytkownika. Jeżeli użytkownicy A i B nie wylosowali
-     * użytkowników C i D ani razu, a wszyscy pozostali użytkownicy wylosowali ich co najmniej raz
-     * to w zależności od liczby porządkowej A i B silnik wyznaczy kombinacje
-     * A -> C i B -> D lub A -> D i B -> C. Wynika to z zasad działania algorytmu.
-     */
     private OrderedUsers orderUsers(Set<UserId> users) {
         int nextOrdinal = 0;
         List<UserId> shuffledUsers = new ArrayList<>(users);
@@ -71,65 +73,55 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         return new OrderedUsers(ordinalToUser, idToOrderedUser);
     }
 
-    private AnnualMatches performAssignment(MatchesHistory matchesHistory,
-                                            OrderedUsers orderedUsers,
-                                            Collection<ForbiddenMatch> forbiddenMatches) {
-        double[][] costMatrix = createCostMatrix(matchesHistory, orderedUsers, forbiddenMatches);
-        int[] algorithmResult = new HungarianAlgorithm(costMatrix).execute();
-        return convertToAnnualMatches(algorithmResult, orderedUsers);
+    private AnnualMatches runAssignmentAlgorithm(MatchesHistory matchesHistory,
+            OrderedUsers orderedUsers, Collection<ForbiddenMatch> forbiddenMatches) {
+        final double[][] costMatrix = createHungarianAlgorithmMatrix(matchesHistory, orderedUsers, forbiddenMatches);
+
+        final int[] algorithmResult = new HungarianAlgorithm(costMatrix).execute();
+
+        final Map<Integer, UserId> ordinalToUser = orderedUsers.ordinalToUser();
+        final List<Match> matches = IntStream.range(0, algorithmResult.length)
+                // algorithmResult[i] = j means i-th person buys gift for j-th person
+                .mapToObj(i -> new Match(ordinalToUser.get(i), ordinalToUser.get(algorithmResult[i])))
+                .collect(Collectors.toList());
+        return new AnnualMatches(matches);
     }
 
     /**
-     * @return macierz kosztów będąca podawana na wejście algorytmu węgierskiego.
-     * Kosztem jest liczba dopasowań w historii takich że i-ty user kupował prezent j-temu.
+     * matrix[i][j] means an i-th person should buy a gift for j-th person.
+     * A value in a matrix represents how bad this match is - a higher value means a worse match.
+     * Bad match is a match:
+     * - from a forbidden list
+     * - match with self
+     * - match with person j who was gifted by i many times already
      */
-    private double[][] createCostMatrix(MatchesHistory matchesHistory,
-                                        OrderedUsers users,
-                                        Collection<ForbiddenMatch> forbiddenMatches) {
-        Map<Integer, OrderedUser> userToOrderedUser = users.userToOrderedUser();
-        double[][] matrix = new double[userToOrderedUser.size()][userToOrderedUser.size()];
+    private double[][] createHungarianAlgorithmMatrix(MatchesHistory matchesHistory,
+            OrderedUsers users, Collection<ForbiddenMatch> forbiddenMatches) {
+        final Map<Integer, OrderedUser> userToOrderedUser = users.userToOrderedUser();
+        final double[][] matrix = new double[userToOrderedUser.size()][userToOrderedUser.size()];
 
-        for (Map.Entry<Match, Long> matchEntry : matchesHistory.annualMatches().entrySet()) {
-            final Match match = matchEntry.getKey();
-            final Long count = matchEntry.getValue();
+        matchesHistory.matches().forEach(((match, count) -> {
             OrderedUser giver = userToOrderedUser.get(match.giver().id());
             OrderedUser recipient = userToOrderedUser.get(match.recipient().id());
             if (giver != null && recipient != null) {
-                matrix[giver.ordinal()][recipient.ordinal()] += count;
+                matrix[giver.positionInMatrix()][recipient.positionInMatrix()] += count;
             }
-        }
+        }));
 
-        // nie można kupować prezentu samemu sobie
+        // prohibit match with self
         for (int i = 0; i < matrix.length; i++) {
-            matrix[i][i] = IMPOSSIBLE;
+            matrix[i][i] = IMPOSSIBLE_MATCH;
         }
 
+        // prohibit forbidden matches
         forbiddenMatches.forEach(forbiddenMatch -> {
-            Integer first = userToOrderedUser.get(forbiddenMatch.getFirstUserId()).ordinal();
-            Integer second = userToOrderedUser.get(forbiddenMatch.getSecondUserId()).ordinal();
-            matrix[first][second] = IMPOSSIBLE;
-            matrix[second][first] = IMPOSSIBLE;
+            Integer first = userToOrderedUser.get(forbiddenMatch.getFirstUserId()).positionInMatrix();
+            Integer second = userToOrderedUser.get(forbiddenMatch.getSecondUserId()).positionInMatrix();
+            matrix[first][second] = IMPOSSIBLE_MATCH;
+            matrix[second][first] = IMPOSSIBLE_MATCH;
         });
 
         return matrix;
-    }
-
-    /**
-     * Przekształca wynik algorytmu węgierskiego w pary kupujący - obdarowywany.
-     *
-     * @param hungarianAlgorithmResult jednowymiarowa tablica gdzie wartość j pod tym i-tym indeksem
-     *                                 oznacza że i-ty użytkownik kupuje j-temu użytkownikowi prezent.
-     * @param orderedUsers             uporządkowana kolekcja użytkowników.
-     */
-    private AnnualMatches convertToAnnualMatches(int[] hungarianAlgorithmResult,
-                                                 OrderedUsers orderedUsers) {
-        Map<Integer, UserId> ordinalToUser = orderedUsers.ordinalToUser();
-        return new AnnualMatches(
-                Stream.iterate(0, i -> ++i)
-                        .limit(hungarianAlgorithmResult.length)
-                        .map(i -> new Match(ordinalToUser.get(i), ordinalToUser.get(hungarianAlgorithmResult[i])))
-                        .collect(Collectors.toList())
-        );
     }
 
 }
