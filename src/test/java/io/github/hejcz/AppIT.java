@@ -7,6 +7,7 @@ import io.github.hejcz.domain.lottery.WishListChange;
 import io.github.hejcz.integration.email.OutgoingEmails;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -27,7 +28,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = App.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -144,6 +148,33 @@ public class AppIT {
                         List.of(
                                 new DtoWishRecipient(null, "B", null, 2),
                                 new DtoWishRecipient(null, "C", null, 1))));
+    }
+
+    @RepeatedTest(5)
+    void shouldDrawDifferentPersonEveryYear() {
+        // delete lottery
+        httpClient.deleteLottery();
+
+        List<String> matches = new ArrayList<>();
+        for (int year : IntStream.rangeClosed(2015, 2023).toArray()) {
+            Mockito.reset(clock);
+            Mockito.when(clock.instant()).thenReturn(LocalDate.of(year, 11, 5).atStartOfDay().toInstant(ZoneOffset.UTC));
+
+            // start lottery 1
+            httpClient.startLottery(List.of(1, 2, 3, 4));
+
+            // match of user 1 from lottery 1
+            final String matchName = httpClient.getMatchOfUser(1)
+                    .getBody()
+                    .get("firstName")
+                    .asText();
+
+            matches.add(matchName);
+        }
+
+        Assertions.assertThat(matches).hasSize(9);
+        Assertions.assertThat(matches).containsExactlyInAnyOrderElementsOf(
+                List.of("Name2", "Name2", "Name2", "Name3", "Name3", "Name3", "Name4", "Name4", "Name4"));
     }
 
     private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {
