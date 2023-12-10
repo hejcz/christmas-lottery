@@ -39,9 +39,12 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         return best;
     }
 
+    // matching is better if:
+    // - there are no two nodes sub-graphs
+    // - TODO replace with "a graph is connected"
     private long score(AnnualMatches best) {
         Collection<Match> matches = best.matches();
-        return -matches.stream()
+        return -1 * matches.stream()
                 .filter(it -> matches.contains(new Match(it.recipient(), it.giver())))
                 .count();
     }
@@ -86,13 +89,13 @@ class HungarianAlgorithmMatchingEngine implements MatchingEngine {
         Map<Integer, OrderedUser> userToOrderedUser = users.userToOrderedUser();
         double[][] matrix = new double[userToOrderedUser.size()][userToOrderedUser.size()];
 
-        for (AnnualMatches annualMatches : matchesHistory.annualMatches()) {
-            for (Match match : annualMatches.matches()) {
-                OrderedUser giver = userToOrderedUser.get(match.giver().id());
-                OrderedUser recipient = userToOrderedUser.get(match.recipient().id());
-                if (giver != null && recipient != null) {
-                    ++matrix[giver.ordinal()][recipient.ordinal()];
-                }
+        for (Map.Entry<Match, Long> matchEntry : matchesHistory.annualMatches().entrySet()) {
+            final Match match = matchEntry.getKey();
+            final Long count = matchEntry.getValue();
+            OrderedUser giver = userToOrderedUser.get(match.giver().id());
+            OrderedUser recipient = userToOrderedUser.get(match.recipient().id());
+            if (giver != null && recipient != null) {
+                matrix[giver.ordinal()][recipient.ordinal()] += count;
             }
         }
 

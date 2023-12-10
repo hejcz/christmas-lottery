@@ -10,13 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,8 +24,8 @@ public class LotteryFacadeImpl implements LotteryFacade {
     private final ForbiddenMatchRepository forbiddenMatchRepository;
 
     public LotteryFacadeImpl(UserFacade userFacade, MatchingEngine matchingEngine, OutgoingEmails outgoingEmails,
-                             MatchRepository matchRepository, WishesRepository wishesRepository,
-                             ForbiddenMatchRepository forbiddenMatchRepository) {
+            MatchRepository matchRepository, WishesRepository wishesRepository,
+            ForbiddenMatchRepository forbiddenMatchRepository) {
         this.userFacade = userFacade;
         this.matchingEngine = matchingEngine;
         this.outgoingEmails = outgoingEmails;
@@ -45,7 +39,7 @@ public class LotteryFacadeImpl implements LotteryFacade {
     public void performLottery(Collection<Integer> participatingUsersIds) {
         Group group = new Group(users(participatingUsersIds));
         if (group.hasMultipleMembers()) {
-            matchRepository.saveAll(lotteryResults(group));
+            matchRepository.saveAll(runLottery(group));
             wishesRepository.deleteAll();
         }
     }
@@ -58,12 +52,12 @@ public class LotteryFacadeImpl implements LotteryFacade {
                 .collect(Collectors.toSet());
     }
 
-    private List<DbMatch> lotteryResults(Group group) {
-        AnnualMatches history =
-                new AnnualMatches(matchRepository.findAll().stream().map(DbMatch::asMatch).collect(Collectors.toSet()));
+    private List<DbMatch> runLottery(Group group) {
+        Map<Match, Long> matchesHistory = matchRepository.findAll().stream()
+                .collect(Collectors.groupingBy(DbMatch::asMatch, Collectors.counting()));
         Collection<ForbiddenMatch> forbiddenMatches =
                 forbiddenMatchRepository.findForbiddenMatchesBetweenUsersInLottery(group.membersIds());
-        return matchingEngine.match(group, new MatchesHistory(Collections.singleton(history)), forbiddenMatches)
+        return matchingEngine.match(group, new MatchesHistory(matchesHistory), forbiddenMatches)
                 .matches()
                 .stream()
                 .map(this::matchToDbMatch)
@@ -140,8 +134,8 @@ public class LotteryFacadeImpl implements LotteryFacade {
     }
 
     private void sendEmailToGiverIfAssigned(Integer recipientId,
-                                            List<DtoWishRecipient> oldWishes,
-                                            Collection<DtoWishRecipient> newWishes) {
+            List<DtoWishRecipient> oldWishes,
+            Collection<DtoWishRecipient> newWishes) {
         findGiverEmail(recipientId).ifPresent(email ->
                 outgoingEmails.sendWishesUpdate(
                         email,

@@ -1,6 +1,6 @@
 package io.github.hejcz.domain.lottery;
 
-import java.util.Collection;
+import java.util.Map;
 
-record MatchesHistory(Collection<AnnualMatches> annualMatches) {
+record MatchesHistory(Map<Match, Long> annualMatches) {
 }
