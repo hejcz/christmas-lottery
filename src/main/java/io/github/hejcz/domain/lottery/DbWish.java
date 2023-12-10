@@ -1,7 +1,6 @@
 package io.github.hejcz.domain.lottery;
 
 import io.github.hejcz.domain.user.DbUser;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
