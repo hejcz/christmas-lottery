@@ -172,8 +172,9 @@ public class AppIT {
         }
 
         Assertions.assertThat(matches).hasSize(9);
-        Assertions.assertThat(matches).containsExactlyInAnyOrderElementsOf(
-                List.of("Name2", "Name2", "Name2", "Name3", "Name3", "Name3", "Name4", "Name4", "Name4"));
+        Assertions.assertThat(matches.subList(0, 3)).containsExactlyInAnyOrderElementsOf(List.of("Name2", "Name3", "Name4"));
+        Assertions.assertThat(matches.subList(3, 6)).containsExactlyInAnyOrderElementsOf(List.of("Name2", "Name3", "Name4"));
+        Assertions.assertThat(matches.subList(6, 9)).containsExactlyInAnyOrderElementsOf(List.of("Name2", "Name3", "Name4"));
     }
 
     private void assertWish(JsonNode firstWish, String expectedTitle, String expectedUrl, int expectedPower) {
